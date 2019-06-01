@@ -1,0 +1,24 @@
+﻿
+.header-column6 {
+    width: 35%;
+}
+
+.title-small2 {
+    color: black;
+    font-size: 20px;
+    font-weight: bold;
+    margin: 15px;
+}
+
+.title-small1 {
+    font-weight: 100 !important;
+    color: #026b97 !important;
+}
+
+.icon-print {
+    margin: 6px;
+    height: 15px;
+    margin-top: 4px;
+    width: 15px;
+    background: url(../images/common-icon.png) no-repeat -228px -129px;
+}
