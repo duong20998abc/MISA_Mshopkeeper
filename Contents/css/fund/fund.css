@@ -1705,6 +1705,10 @@ button.receiptFormDetail-btnPayDebt.ui-button, button.alertDialog_btnAccept, .al
         margin-top: 4px;
     }
 
+    .recipeFormDetail_formStaff .detail-table-data_list-data, .recipeFormDetail_formSupplier .detail-table-data_list-data {
+        height: 86%;
+    }
+
 .recipeForm_disablePayDate {
     width: 128px;
     left: 5px;
@@ -2057,4 +2061,9 @@ button.alertDialog_btnCancel, .delete-form-message {
 .view-document input[fieldName="PersonCode"], .view-document input[fieldName="EmployeeCode"], .view-document input[fieldName="DocumentTypeName"],
 .edit-document .formDetail-info-paydebt input[fieldName="PersonCode"], .formDetail-info-paydebt input[fieldName="PersonCode"] {
     width: 100%;
+}
+
+.row-focus {
+    background: #006189;
+    color: white;
 }

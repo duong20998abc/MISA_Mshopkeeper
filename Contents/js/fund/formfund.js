@@ -75,7 +75,11 @@ class Fund {
                 {
                     html: '<div class="receiptFormDetail-btnSave-icon receiptFormDetail-icon left-float"></div><span class="receiptFormDetail-btnPayDebt-text receiptFormDetail-text">Lưu</span>',
                     class: "alertDialog_btnSave alertDialog_btn",
-                    click: function () { fund.saveNewDocument(); }
+                    click: function () {
+                        fund.saveNewDocument();
+                        fund.allowHotKey = true;
+                        fund.allowHotKeyInForm = false;
+                    }
                 },
                 {
                     html: '<div class="receiptFormDetail-btnDelete-icon receiptFormDetail-icon left-float"></div><span class="receiptFormDetail-btnPayDebt-text receiptFormDetail-text">Xóa</span>',
@@ -83,6 +87,8 @@ class Fund {
                     click: function () {
                         fund.deleteDocument();
                         fund.messageDialog.closeDialog();
+                        fund.allowHotKey = true;
+                        fund.allowHotKeyInForm = false;
                     }
                 },
                 {
@@ -91,6 +97,8 @@ class Fund {
                     click: function () {
                         fund.messageDialog.closeDialog();
                         fund.check.closeDialog();
+                        fund.allowHotKey = true;
+                        fund.allowHotKeyInForm = false;
                     }
                 },
                 {
@@ -111,6 +119,8 @@ class Fund {
         this.supplierNames = [];
         this.checkViewForm = false;
         this.checkEditForm = false;
+        this.allowHotKey = true;
+        this.allowHotKeyInForm = false;
         //Tạo mới dialog
         this.check = new Dialog('#formDetail', 960, 750, this);
         this.popup = new Dialog('#recipeFormDetail', 800, 600, this, buttons);
@@ -189,6 +199,10 @@ class Fund {
 
         $('input[fieldName="PersonCode"]').change(function () {
             $('input[fieldName="PersonCode"]').val($(this).val());
+        });
+
+        $('input[fieldName="PersonName"]').change(function () {
+            $('input[fieldName="PersonName"]').val($(this).val());
         });
          
         $('input[fieldName="EmployeeCode"]').change(function () {
@@ -641,45 +655,91 @@ class Fund {
         $(window).keydown(function (event) {
             // Bấm ctrl + 1 thì mở form thêm mới
             if (event.ctrlKey && event.keyCode === 49) {
-                fund.openDropdownMenuAdd();
+                if (fund.allowHotKey) {
+                    fund.openDropdownMenuAdd();
+                }
+                event.preventDefault();
+            }
+
+            // Bấm ctrl + 2 thì mở form nhân bản
+            if (event.ctrlKey && event.keyCode === 50) {
+                if (fund.allowHotKey) {
+                    fund.duplicateDocument();
+                }
+                event.preventDefault();
+            }
+
+            // Bấm ctrl + 3 thì mở form xem
+            if (event.ctrlKey && event.keyCode === 51) {
+                if (fund.allowHotKey) {
+                    fund.viewDocument();
+                }
+                event.preventDefault();
+            }
+
+            // Bấm ctrl + E thì mở form sửa thông tin chứng từ
+            if (event.ctrlKey && event.keyCode === 69) {
+                if (fund.allowHotKey) {
+                    fund.editDocument();
+                }
+                event.preventDefault();
+            }
+
+            // Bấm ctrl + E thì xóa chứng từ
+            if (event.ctrlKey && event.keyCode === 68) {
+                if (fund.allowHotKey) {
+                    fund.deleteDocumentDialog();
+                }
                 event.preventDefault();
             }
 
             // Bấm ctrl + Q thì đóng form thêm mới
             if (event.ctrlKey && event.keyCode === 81) {
-                fund.closeFormDialog();
+                if (fund.allowHotKeyInForm) {
+                    fund.closeFormDialog();
+                }     
                 event.preventDefault();
             }
 
             // Bấm ctrl + S thì lưu thêm mới
             if (event.ctrlKey && event.keyCode === 83) {
-                fund.saveNewDocument();
+                if (fund.allowHotKeyInForm) {
+                    fund.saveNewDocument();
+                }
                 event.preventDefault();
             }
 
             // Bấm F1 thì chuyển tab sang trợ giúp
             if (event.keyCode === 112) {
-                window.open("http://help.mshopkeeper.vn/170103_thu_tien_mat.htm", '_blank');
+                if (check.allowHotKeyInForm) {
+                    window.open("http://help.mshopkeeper.vn/170103_thu_tien_mat.htm", '_blank');
+                } 
                 event.preventDefault();
             }
             
             // Bấm mũi tên xuống thì di chuyển tới dòng tiếp theo đồng thời load dữ liệu của hàng đó xuống bảng chi tiết 
             if (event.keyCode === 40) {
-                let rowFocus = $('.middle-content_table-data .table-row.choose-background');
-                fund.loadDocumentByHotKey(rowFocus, "next");
+                if (fund.allowHotKey) {
+                    let rowFocus = $('.middle-content_table-data .table-row.choose-background');
+                    fund.loadDocumentByHotKey(rowFocus, "next");
+                }
                 event.preventDefault();
             }
             // Bấm mũi tên lên trên thì di chuyển tới dòng phía trên theo đồng thời load dữ liệu của hàng đó xuống bảng chi tiết 
             if (event.keyCode === 38) {
-                let rowFocus = $('.middle-content_table-data .table-row.choose-background');
-                fund.loadDocumentByHotKey(rowFocus, "previous");
+                if (fund.allowHotKey) {
+                    let rowFocus = $('.middle-content_table-data .table-row.choose-background');
+                    fund.loadDocumentByHotKey(rowFocus, "previous");
+                }
                 event.preventDefault();
             }
 
             if (event.ctrlKey && event.keyCode === 65) {
-                $('.table-data_list-data .table-row').addClass("choose-background");
-                $('.table-data_list-data .table-row').find('img').attr('src', "/Contents/images/check.png");
-                $('.choose-all').find('img').attr('src', "/Contents/images/check.png");
+                if (fund.allowHotKey) {
+                    $('.table-data_list-data .table-row').addClass("choose-background");
+                    $('.table-data_list-data .table-row').find('img').attr('src', "/Contents/images/check.png");
+                    $('.choose-all').find('img').attr('src', "/Contents/images/check.png");
+                }
                 event.preventDefault();
             }
         });
@@ -762,7 +822,7 @@ class Fund {
     //Tạo bởi: NBDUONG (6/5/2019)
     getStaffData(staffName, staffCode) {
         $('.recipeFormDetail_formStaff').prev().prev().prev().val(staffCode);
-        $('.recipeFormDetail_formStaff').parent().next().val(staffName);
+        $('.recipeFormDetail_formStaff').parent().next().next().val(staffName);
     }
 
     //Hàm đồng bộ dữ liệu giữa mã nhà cung cấp và tên nhà cung cấp
@@ -823,6 +883,7 @@ class Fund {
     //Nếu input nhập vào trùng với mã đối tượng hiển thị tên và các trường tương ứng
     //Tạo bởi: NBDUONG(23/5/2019)
     checkSupplierCodeValidateInput() {
+        var scrollTop = 0;
         //Bấm ra ngoài vùng input mã đối tượng
         $('.supplier-code').focusout(function () {
             let suppliercode = $(this).val().trim();
@@ -896,6 +957,128 @@ class Fund {
                         $('.employee-code').closest('.left-item-input-with-icon').next().hide();
                     }
                 });
+            }
+        });
+
+        $('input[fieldName="PersonCode"]').keyup(function (event) {
+            if (event.keyCode === 13) {
+                let personCode = $('.row-focus').find('.detail-data-item_first-column').text().trim();
+                let personName = $('.row-focus').find('.detail-data-item_second-column').text().trim();
+                $('#formDetail input[fieldName="PersonId"]').val($('.row-focus').data("PersonId"));
+                fund.asyncDataValue(personCode, personName);
+                $(".recipeFormDetail_formSupplier").hide();
+                $('.row-focus').removeClass('.row-focus');
+            } else if (event.keyCode === 40) {
+                if ($('.recipeFormDetail_formSupplier:visible').length > 0) {
+                    if ($('.row-focus').nextAll('.table-row:visible').first().hasClass('table-row')) {
+                        $('.row-focus').removeClass('row-focus').nextAll('.table-row:visible').first().addClass('row-focus');
+                    } else {
+                        scrollTop = -35;
+                        $('.row-focus').removeClass('.row-focus');
+                        $('.recipeFormDetail_formSupplier .table-row:visible').first().addClass('row-focus');
+                    }
+                    $('.recipeFormDetail_formSupplier .detail-table-data_list-data').scrollTop(scrollTop += 35);
+                } else {
+                    scrollTop = 0;
+                    $('.recipeFormDetail_formSupplier').show();
+                    $('.recipeFormDetail_formSupplier .table-row').show();
+                    $('.recipeFormDetail_formSupplier .table-row:visible').eq(0).addClass('row-focus');
+                }
+            } else if (event.keyCode === 38) {
+                if ($('.recipeFormDetail_formSupplier:visible').length > 0) {
+                    if ($('.row-focus').prevAll('.table-row:visible').first().hasClass('table-row')) {
+                        $('.row-focus').removeClass('row-focus').prevAll('.table-row:visible').first().addClass('row-focus');
+                    } else {
+                        scrollTop = 800;
+                        $('.row-focus').removeClass('.row-focus');
+                        $('.recipeFormDetail_formSupplier .table-row:visible').last().addClass('row-focus');
+                    }
+                    $('.recipeFormDetail_formSupplier .detail-table-data_list-data').scrollTop(scrollTop -= 35);
+                }
+            } else {
+                scrollTop = 0;
+                $('.recipeFormDetail_formSupplier .detail-table-data_list-data').scrollTop(scrollTop);
+                let value = $(this).val().toLowerCase();
+                $('.row-focus').removeClass('row-focus');
+                let checkHasValue = false;
+                $('.recipeFormDetail_formSupplier .table-row').hide();
+                $('.recipeFormDetail_formSupplier .table-row').each(function () {
+                    let personCode = $(this).find('div[fieldName="PersonCode"]').text().trim().toLowerCase();
+                    let personName = $(this).find('div[fieldName="PersonName"]').text().trim().toLowerCase();
+                    if (personCode.includes(value) || personName.includes(value)) {
+                        $(this).show();
+                        checkHasValue = true;
+                    } else {
+                        $(this).hide();
+                    }
+                });
+                if (checkHasValue) {
+                    $('.recipeFormDetail_formSupplier').show();
+                    $('.recipeFormDetail_formSupplier .table-row:visible').eq(0).addClass('row-focus');
+                } else {
+                    $('.recipeFormDetail_formSupplier').hide();
+                }
+            }
+        });
+
+        $('input[fieldName="EmployeeCode"]').keyup(function (event) {
+            if (event.keyCode === 13) {
+                let personCode = $('.row-focus').find('.detail-data-item_first-column').text().trim();
+                let personName = $('.row-focus').find('.detail-data-item_second-column').text().trim();
+                $('#formDetail input[fieldName="EmployeeId"]').val($('.row-focus').data("EmployeeId"));
+                fund.getStaffData(personName, personCode);
+                $(".recipeFormDetail_formStaff").hide();
+                $('.row-focus').removeClass('.row-focus');
+            } else if (event.keyCode === 40) {
+                if ($('.recipeFormDetail_formStaff:visible').length > 0) {
+                    if ($('.row-focus').nextAll('.table-row:visible').first().hasClass('table-row')) {
+                        $('.row-focus').removeClass('row-focus').nextAll('.table-row:visible').first().addClass('row-focus');
+                    } else {
+                        scrollTop = -35;
+                        $('.row-focus').removeClass('.row-focus');
+                        $('.recipeFormDetail_formStaff .table-row:visible').first().addClass('row-focus');
+                    }
+                    $('.recipeFormDetail_formStaff .detail-table-data_list-data').scrollTop(scrollTop += 35);
+                } else {
+                    scrollTop = 0;
+                    $('.recipeFormDetail_formStaff').show();
+                    $('.recipeFormDetail_formStaff .table-row').show();
+                    $('.recipeFormDetail_formStaff .table-row:visible').eq(0).addClass('row-focus');
+                }
+            } else if (event.keyCode === 38) {
+                if ($('.recipeFormDetail_formStaff:visible').length > 0) {
+                    if ($('.row-focus').prevAll('.table-row:visible').first().hasClass('table-row')) {
+                        $('.row-focus').removeClass('row-focus').prevAll('.table-row:visible').first().addClass('row-focus');
+                    } else {
+                        scrollTop = 800;
+                        $('.row-focus').removeClass('.row-focus');
+                        $('.recipeFormDetail_formStaff .table-row:visible').last().addClass('row-focus');
+                    }
+                    $('.recipeFormDetail_formStaff .detail-table-data_list-data').scrollTop(scrollTop -= 35);
+                }
+            } else {
+                scrollTop = 0;
+                $('.recipeFormDetail_formStaff .detail-table-data_list-data').scrollTop(scrollTop);
+                let value = $(this).val().toLowerCase();
+                $('.row-focus').removeClass('row-focus');
+                let checkHasValue = false;
+                $('.recipeFormDetail_formStaff .table-row').hide();
+                $('.recipeFormDetail_formStaff .table-row').each(function () {
+                    let personCode = $(this).find('div[fieldName="EmployeeCode"]').text().trim().toLowerCase();
+                    let personName = $(this).find('div[fieldName="EmployeeName"]').text().trim().toLowerCase();
+                    if (personCode.includes(value) || personName.includes(value)) {
+                        $(this).show();
+                        checkHasValue = true;
+                    } else {
+                        $(this).hide();
+                    }
+                });
+                if (checkHasValue) {
+                    $('.recipeFormDetail_formStaff').show();
+                    $('.recipeFormDetail_formStaff .table-row:visible').eq(0).addClass('row-focus');
+                } else {
+                    $('.recipeFormDetail_formStaff').hide();
+                }
             }
         });
     }
@@ -996,6 +1179,7 @@ class Fund {
             fund.getSupplierData(supplierCode, supplierName);
             $(this).parents('.recipeFormDetail_formSupplier').hide();
             $('#formDetail input[fieldName="PersonId"]').val($(this).data("PersonId"));
+            $('#formDetail .receiver-name').val(supplierName);
         });
 
         $('body').on('mousedown', '#formDetail .recipeFormDetail_formStaff .table-row', function () {
@@ -1064,6 +1248,8 @@ class Fund {
     addCollectMoney() {
         fund.checkViewForm = false;
         fund.checkEditForm = false;
+        fund.allowHotKeyInForm = true;
+        fund.allowHotKey = false;
         fund.check.openDialog();
         $('#formDetail').addClass("add-collect-money");
         $('span#ui-id-1').text("Thêm phiếu thu");
@@ -1083,6 +1269,8 @@ class Fund {
     addPayMoney() {
         fund.checkViewForm = false;
         fund.checkEditForm = false;
+        fund.allowHotKeyInForm = true;
+        fund.allowHotKey = false;
         fund.check.openDialog();
         $('#formDetail').addClass("add-pay-money");
         $('span#ui-id-1').text("Thêm phiếu chi");
@@ -1106,6 +1294,8 @@ class Fund {
     viewDocument() {
         fund.checkViewForm = true;
         fund.checkEditForm = false;
+        fund.allowHotKeyInForm = true;
+        fund.allowHotKey = false;
         fund.check.openDialog();
         $('#formDetail').addClass("view-document");
         $('span#ui-id-1').text("Phiếu thu");
@@ -1116,6 +1306,8 @@ class Fund {
     editDocument() {
         fund.checkEditForm = true;
         fund.checkViewForm = false;
+        fund.allowHotKeyInForm = true;
+        fund.allowHotKey = false;
         fund.check.openDialog();
         $('#formDetail').addClass("edit-document");
         $('span#ui-id-1').text("Sửa phiếu thu");
@@ -1124,6 +1316,8 @@ class Fund {
     }
 
     duplicateDocument() {
+        fund.allowHotKeyInForm = true;
+        fund.allowHotKey = false;
         fund.check.openDialog();
         $('#formDetail').addClass("duplicate-document");
         $('span#ui-id-1').text("Nhân bản phiếu thu");
@@ -1134,6 +1328,8 @@ class Fund {
     //Hàm xử lý khi chọn nút "Chọn hóa đơn trả nợ" 
     //Tạo bởi: NBDUONG(6/5/2019)
     choosePayDebtRecipt() {
+        fund.allowHotKeyInForm = true;
+        fund.allowHotKey = false;
         fund.popup.openDialog();
         fund.popup.setValueTimeDefault();
         fund.getTotalMoney();
@@ -1157,7 +1353,7 @@ class Fund {
         $(".input-staffCode").removeClass("input-staffCode");
         $(".input-staffName").removeClass("input-staffName");
         $(this).prev().prev().addClass('input-staffCode');
-        $(this).parent().next().addClass('input-staffName');
+        $(this).parent().next().next().addClass('input-staffName');
         fund.chooseStaff.openDialog();
         $('span#ui-id-5').text("Chọn nhân viên");
         fund.chooseStaff.setValueTimeDefault();
