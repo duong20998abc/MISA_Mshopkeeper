@@ -69,8 +69,8 @@
                     </div>
                 </div>
                 <div class="header-right-item left-float">
-                    <div class="header-right-item_icon-notification left-float"></div>
-                    <div class="header-right-item_icon-help left-float"></div>
+                    <div class="header-right-item_icon-notification left-float" title="Thông báo"></div>
+                    <div class="header-right-item_icon-help left-float" title="Trợ giúp"></div>
                 </div>
             </div>
         </div>
@@ -309,14 +309,13 @@
                             </div>
                         </div>
                     </div>
-
-                    <!-- Xuất hiện loading khi load dữ liệu trong trang -->
-                    <!-- Tạo bởi: NBDUONG(15/5/2019) -->
-                    <div class="loading"></div>
-
+         
                     <!-- Kết thúc phần đầu bảng dữ liệu -->
                     <!-- Phần thân dữ liệu của bảng -->
-                    <div class="middle-content_table-data">
+                    <div class="middle-content_table-data" style="position:relative;">
+                        <!-- Xuất hiện loading khi load dữ liệu trong trang -->
+                        <!-- Tạo bởi: NBDUONG(15/5/2019) -->
+                        <div class="loading"></div>
                         <div class="table-data_list-data">
 
                         </div>
@@ -562,7 +561,7 @@
                                     <div class="left-item-input-with-icon left-float flex">
                                         <input type="text" value="" class="left-float supplier-code-paydebt" disabled fieldName="PersonCode" />
                                         <span class="input-dropdown-icon dropdown-supplier left-float"></span>
-                                        <span class="input-search-icon search-icon-supplier left-float"></span>
+                                        <span class="input-search-icon  search-icon-supplier left-float"></span>
                                     </div>
                                     <div class="left-item-input-with-icon-disabled"></div>
                                     <input type="text" value="" class="left-float supplier-name-paydebt" disabled fieldName="PersonName" />
@@ -630,7 +629,7 @@
                                         <input type="text" value="" tabindex="0" fieldName="DocumentCode" />
                                     </div>
                                     <div class="right-item-input right-item-input-with-icon flex">
-                                        <input type="text" value="" class="select-date-pay left-float" data-previous="" tabindex="0" dataType="date" fieldName="DocumentDate" />
+                                        <input type="text" value="" class="select-date-pay left-float" data-previous="" tabindex="0" dataType="date" fieldName="DocumentDate" style="text-align:left"/>
                                         <span class="icon input-calendar-icon left-float"></span>
                                     </div>
                                 </div>
@@ -840,7 +839,7 @@
                                     <div class="exclamation left-float"></div>
                                 </div>
                                 <div class="left-item-input left-item-without-icon flex">
-                                    <input type="text" value="" tabindex="0" inputType="Reason" fieldName="Reason"/>
+                                    <input type="text" value="" tabindex="0" inputType="Reason" class="reason-paydebt" fieldName="Reason"/>
                                     <div class="exclamation left-float"></div>
                                 </div>
                                 <div class="left-item-input flex" style="margin-top: 3px;">
@@ -886,7 +885,7 @@
                                         <input type="text" value="" tabindex="0" fieldName="DocumentCode" />
                                     </div>
                                     <div class="right-item-input right-item-input-with-icon flex" style="margin-top:12px;">
-                                        <input type="text" value="" class="select-date-pay left-float" data-previous="" dataType="date" tabindex="0" fieldName="DocumentDate" />
+                                        <input type="text" value="" class="select-date-pay left-float" data-previous="" dataType="date" tabindex="0" fieldName="DocumentDate" style="text-align:left"/>
                                         <span class="icon input-calendar-icon left-float"></span>
                                     </div>
                                     <div class="right-item-input right-item-input-with-icon flex choosePaidType">

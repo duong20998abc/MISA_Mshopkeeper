@@ -78,6 +78,14 @@ class Fund {
                     click: function () { fund.saveNewDocument(); }
                 },
                 {
+                    html: '<div class="receiptFormDetail-btnDelete-icon receiptFormDetail-icon left-float"></div><span class="receiptFormDetail-btnPayDebt-text receiptFormDetail-text">Xóa</span>',
+                    class: "alertDialog_btnDelete alertDialog_btn",
+                    click: function () {
+                        fund.deleteDocument();
+                        fund.messageDialog.closeDialog();
+                    }
+                },
+                {
                     html: '<div class="receiptFormDetail-btnNotSave-icon receiptFormDetail-icon left-float"></div><span class="receiptFormDetail-btnPayDebt-text receiptFormDetail-text">Không lưu</span>',
                     class: "alertDialog_btnNotSave alertDialog_btn",
                     click: function () {
@@ -96,7 +104,6 @@ class Fund {
                     click: function () { fund.messageDialog.closeDialog(); }
                 }
             ];
-
 
         this.supplierCodes = [];
         this.employeeCodes = [];
@@ -130,13 +137,13 @@ class Fund {
         this.setHotKey();
         this.setInputEvent();
         this.setTabOrder();
-        this.closeFormDialog();
+        this.closeFormMessage();
         this.checkSupplierCodeValidateInput();
         this.ifIsNaN();
         this.setDefaultButton();
         this.validateInputData();
         this.clickSave();
-        this.asyncDate();
+        this.asyncData();
     }
 
     setDefaultButton() {
@@ -145,7 +152,7 @@ class Fund {
         $('#btnView').click(this.viewDocument);
         $('#btnEdit').click(this.editDocument);
         $('#btnDuplicate').click(this.duplicateDocument);
-        $('#btnDelete').click(this.deleteDocument);
+        $('#btnDelete').click(this.deleteDocumentDialog);
         $('#btnRefresh').click(this.refreshDocument);
         $('.choose-pay-recipt').click(this.choosePayDebtRecipt);
         $('#choose-object').click(this.chooseObjectPay);
@@ -153,7 +160,7 @@ class Fund {
         //$('#formDetail #save-formDetail').click(this.alertMessage);
     }
 
-    asyncDate() {
+    asyncData() {
         $('input[fieldName="DocumentDate2"]').val($('input[fieldName="DocumentDate"]').val());
         $('input[fieldName="DocumentDate"]').change(function () {
             $('input[fieldName="DocumentDate2"]').val($(this).val());
@@ -176,10 +183,14 @@ class Fund {
             $('input[fieldName="Reason"]').val($(this).val());
         });
 
+        $('input[fieldName="Address"]').change(function () {
+            $('input[fieldName="Address"]').val($(this).val());
+        });
+
         $('input[fieldName="PersonCode"]').change(function () {
             $('input[fieldName="PersonCode"]').val($(this).val());
         });
-
+         
         $('input[fieldName="EmployeeCode"]').change(function () {
             $('input[fieldName="EmployeeCode"]').val($(this).val());
         });
@@ -213,7 +224,7 @@ class Fund {
         $('.middle-content_table-data .table-data_list-data').html("");
         $('.MISABody-part_middle-content .footer-content_detail-table-data .detail-table-data_list-data').html("");
         $('.detailTotalMoney span').text("0");
-        $('.total-money-row_fifth-column span').text("0")
+        $('.total-money-row_fifth-column span').text("0");
         $('.MISABody-part_middle-content .loading').show();
         $.ajax({
             type: "GET",
@@ -252,6 +263,8 @@ class Fund {
                         $('.middle-content_table-data .table-data_list-data').append($('.row-clone').html());
                         //Gán Id cho dòng được click
                         $('.middle-content_table-data .table-row:last-child').data("DocumentId", item["DocumentId"]);
+                        $('.middle-content_table-data .table-row:last-child').data("DocumentCode", item["DocumentCode"]);
+                        $('.middle-content_table-data .table-row:last-child').data("DocumentType", item["DocumentType"]);
 
                         //Các dòng liền nhau có màu khác nhau
                         if (index % 2 !== 0) {
@@ -442,9 +455,7 @@ class Fund {
         //Check nếu là edit thông tin chứng từ
         if (fund.checkEditForm) {
             fund.editDocumentData(document);
-            alert("edit");
         } else {
-            alert("create");
             $.ajax({
                 type: "POST",
                 url: "/fund/documents/new",
@@ -523,12 +534,21 @@ class Fund {
             $('.warning-message').next().find('.alertDialog_btnSave').hide();
             $('.warning-message').next().find('.alertDialog_btnNotSave').hide();
             $('.warning-message').next().find('.alertDialog_btnCancel').hide();
+            $('.warning-message').next().find('.alertDialog_btnDelete').hide();
         }
         else if ($('#alertDialog').hasClass('close-form-message')) {
             $('.close-form-message').next().find('.alertDialog_btnAccept').hide();
+            $('.close-form-message').next().find('.alertDialog_btnDelete').hide();
             $('.close-form-message').next().find('.alertDialog_btnSave').show();
             $('.close-form-message').next().find('.alertDialog_btnNotSave').show();
             $('.close-form-message').next().find('.alertDialog_btnCancel').show();
+        }
+        else if ($('#alertDialog').hasClass('delete-form-message')) {
+            $('.delete-form-message').next().find('.alertDialog_btnAccept').hide();
+            $('.delete-form-message').next().find('.alertDialog_btnDelete').show();
+            $('.delete-form-message').next().find('.alertDialog_btnSave').hide();
+            $('.delete-form-message').next().find('.alertDialog_btnNotSave').hide();
+            $('.delete-form-message').next().find('.alertDialog_btnCancel').show();
         }
     }
 
@@ -548,6 +568,17 @@ class Fund {
                 alert(e.responseText);
             }
         });
+    }
+
+    deleteDocumentDialog() {
+        fund.alertMessage();
+        $('#alertDialog').addClass("delete-form-message");
+        $('span#ui-id-3').text("Xóa dữ liệu");
+        fund.messageDialog.changeIconAlertMessage("alert-icon-question");
+        let documentCode = $('.middle-content_table-data .table-row.choose-background').data("DocumentCode");
+        let documentType = $('.middle-content_table-data .table-row.choose-background').data("DocumentType");
+        fund.messageDialog.changeContentAlertMessage("Bạn có chắc chắn muốn xóa " + documentType + " " + documentCode + " không");
+        fund.changeButtonMessageDialog();
     }
 
     //Nạp lại dữ liệu cho chứng từ
@@ -616,13 +647,13 @@ class Fund {
 
             // Bấm ctrl + Q thì đóng form thêm mới
             if (event.ctrlKey && event.keyCode === 81) {
-                fund.alertMessage();
+                fund.closeFormDialog();
                 event.preventDefault();
             }
 
             // Bấm ctrl + S thì lưu thêm mới
             if (event.ctrlKey && event.keyCode === 83) {
-                fund.alertMessage();
+                fund.saveNewDocument();
                 event.preventDefault();
             }
 
@@ -631,7 +662,7 @@ class Fund {
                 window.open("http://help.mshopkeeper.vn/170103_thu_tien_mat.htm", '_blank');
                 event.preventDefault();
             }
-
+            
             // Bấm mũi tên xuống thì di chuyển tới dòng tiếp theo đồng thời load dữ liệu của hàng đó xuống bảng chi tiết 
             if (event.keyCode === 40) {
                 let rowFocus = $('.middle-content_table-data .table-row.choose-background');
@@ -739,6 +770,8 @@ class Fund {
     asyncDataValue(supplierCode, supplierName) {
         $('.supplier-name-paydebt').val(supplierName);
         $('.supplier-code-paydebt').val(supplierCode);
+        $('.supplier-name').val(supplierName);
+        $('.supplier-code').val(supplierCode);
         var reasonPayDebt = "Trả nợ cho " + supplierName;
         $('.reason-paydebt').val(reasonPayDebt);
     }
@@ -843,11 +876,11 @@ class Fund {
         //Bấm ra ngoài vùng input mã nhân viên
         $('.employee-code').focusout(function () {
             let employeecode = $(this).val().trim();
-            //Nếu input nhập vào không trùng mã có trong bảng
+            //Nếu input nhập vào không trùng mã có trong bảng   
             if (!fund.employeeCodes.includes(employeecode)) {
                 $(this).val("");
                 $(this).parent().addClass('border-red');
-                $(this).closest('.left-item-input-with-icon').next().show();
+                $(this).parent().next().show();
                 $('input[fieldName="EmployeeCode"]').val("");
                 $('input[fieldName="EmployeeName"]').val("");
                 $('input[fieldName="EmployeeId"]').val("");
@@ -988,15 +1021,19 @@ class Fund {
             $(this).parent().hide();
         });
     }
-
+    
     closeFormDialog() {
+        fund.alertMessage();
+        $('#alertDialog').addClass("close-form-message");
+        $('span#ui-id-3').text("Dữ liệu chưa được lưu");
+        fund.messageDialog.changeContentAlertMessage("Dữ liệu đã thay đổi. Bạn có muốn lưu không?");
+        fund.messageDialog.changeIconAlertMessage("alert-icon-question");
+        fund.changeButtonMessageDialog();
+    }
+
+    closeFormMessage() {
         $('body').on('click', '#btnCloseFormDialog', function () {
-            fund.alertMessage();
-            $('#alertDialog').addClass("close-form-message");
-            $('span#ui-id-3').text("Dữ liệu chưa được lưu");
-            fund.messageDialog.changeContentAlertMessage("Dữ liệu đã thay đổi. Bạn có muốn lưu không?");
-            fund.messageDialog.changeIconAlertMessage("alert-icon-question");
-            fund.changeButtonMessageDialog();
+            fund.closeFormDialog();
         });
     }
 
@@ -1147,9 +1184,12 @@ class Fund {
                         let fieldName = $(this).attr("fieldName");
                         let dataType = $(this).attr("dataType");
                         if (dataType === "date") {
-                            response[fieldName] = new Date(response[fieldName]).toLocaleDateString('en-GB');
+                            //var value = response[fieldName];
+                            var value = new Date(response[fieldName]).toLocaleDateString('en-GB');
+                            $(this).val(value);
+                        } else {
+                            $(this).val(response[fieldName]);
                         }
-                        $(this).val(response[fieldName]);
                     });
                     if (checkDuplicate) {
                         $('#formDetail input[fieldName="DocumentCode"]').val("PT" + Math.random().toString().substr(2, 6));

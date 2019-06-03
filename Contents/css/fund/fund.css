@@ -34,6 +34,10 @@ body {
     display: flex;
 }
 
+input:focus {
+    outline: none;
+    border: 1px solid #A6C8FF;
+}
 
 [type="radio"]:checked,
 [type="radio"]:not(:checked) {
@@ -647,7 +651,7 @@ input[dataType="date"] {
 }
 
 .choose-background {
-    background: #d6ebec !important;
+    background: #C3ECFF !important;
 }
 
 .row-even {
@@ -786,7 +790,7 @@ span.column-text {
 }
 
     .table-row:hover {
-        background: #d6ebec !important;
+        background: #EAEFF4 !important;
     }
 
 .data-item_first-column .choose-all {
@@ -1073,7 +1077,9 @@ formDetail_tab_blank-space {
 
     #formDetail .footer-content_detail-table-data .detail-table-data_list-data .table-row.flex input:focus {
         background: #fff;
+        border: 1px solid #A6C8FF;
     }
+
 
 .detail-info-column,
 .detail-data-item {
@@ -1156,6 +1162,10 @@ formDetail_tab_blank-space {
     background: #f0f0f0;
 }
 
+.ui-button-icon.ui-icon.ui-icon-closethick {
+    background: url(/Contents/images/common-icon.png) no-repeat -1127px -127px;
+}
+
 /*Css cho danh sách các nút*/
 /*Tạo bởi: NBDUONG (4/5/2019)*/
 .formDetail-list-button .list-button_item .icon {
@@ -1234,7 +1244,7 @@ formDetail_tab_blank-space {
 .formDetail_main-form {
     margin: 8px;
     width: calc(100% - 20px);
-    height: calc(100% - 60px);
+    height: calc(100% - 58px);
 }
 
 /*Css cho thanh điều hướng*/
@@ -1405,7 +1415,7 @@ formDetail_tab_blank-space {
 }
 
 .formDetail_detail-info {
-    height: calc(60% - 120px);
+    height: calc(60% - 115px);
 }
 
 .choosePaidType {
@@ -1413,6 +1423,9 @@ formDetail_tab_blank-space {
     position: relative;
 }
 
+.formDetail-info-paydebt .left-item-input-with-icon-disabled, .formDetail-info-paydebt .dropdown-supplier, .formDetail-info-paydebt .search-icon-supplier {
+    display: none;
+}
 /*Kết thúc CSS cho phần thông tin của form*/
 /*Css cho bảng dữ liệu trong form*/
 /*Tạo bởi: NBDUONG (5/5/2019)*/
@@ -1619,7 +1632,7 @@ formDetail_tab_blank-space {
 }
 
 /*nút Trả nợ*/
-button.receiptFormDetail-btnPayDebt.ui-button, button.alertDialog_btnAccept, .alertDialog_btnSave {
+button.receiptFormDetail-btnPayDebt.ui-button, button.alertDialog_btnAccept, .alertDialog_btnSave, .alertDialog_btnDelete {
     padding: 0 15px 0 0;
     background-color: #026b97;
     border-radius: 4px;
@@ -1914,19 +1927,29 @@ button.receiptFormDetail-btnPayDebt.ui-button, button.alertDialog_btnAccept, .al
     margin-left: 5px;
 }
 
-button.alertDialog_btnAccept, button.alertDialog_btnCancel, button.alertDialog_btnSave, button.alertDialog_btnNotSave {
-    padding: 0px 13px;
+button.alertDialog_btnAccept, button.alertDialog_btnCancel, button.alertDialog_btnSave, button.alertDialog_btnNotSave, button.alertDialog_btnDelete {
+    padding: 0px 7px;
 }
 
     button.alertDialog_btnAccept:focus, .alertDialog_btnSave:focus {
         background-color: #026b97;
     }
 
-.alertDialog_btnAccept span, .alertDialog_btnCancel span, .alertDialog_btnSave span, .alertDialog_btnNotSave span {
+.alertDialog_btnAccept span, .alertDialog_btnCancel span, .alertDialog_btnSave span, .alertDialog_btnNotSave span, .alertDialog_btnDelete span {
     line-height: 30px;
     margin-left: 0px;
     font-size: 12px;
 }
+.alertDialog_btnDelete {
+    background-color: #df4646;
+}
+    .alertDialog_btnDelete:hover, .alertDialog_btnDelete:focus {
+        background-color: #df4646;
+    }
+     
+    .alertDialog_btnDelete span {
+        color: #fff;
+    }
 
 .alertDialog_btnNotSave {
     border: 1px solid #026b97;
@@ -1939,29 +1962,40 @@ button.alertDialog_btnAccept, button.alertDialog_btnCancel, button.alertDialog_b
     }
 
 .receiptFormDetail-btnNotSave-icon {
-    background: url('../../images/not-save.png') no-repeat;
+    background: url('/Contents/images/not-save.png') no-repeat;
 }
 
 .receiptFormDetail-btnSave-icon {
-    background: url('../../images/save-white.png') no-repeat 0px 2px;
+    background: url('/Contents/images/save-white.png') no-repeat 0px 2px;
 }
 
-button.alertDialog_btnCancel {
+.receiptFormDetail-btnDelete-icon {
+    background: url('/Contents/images/delete-white.png') no-repeat 0px 1px;
+}
+
+.alertDialog_btn .receiptFormDetail-btnCancel-icon {
+    margin: 0;
+}
+
+button.alertDialog_btnCancel, .delete-form-message {
     height: auto;
 }
 
 .alertDialog_btn .receiptFormDetail-icon {
-    margin: 7px 4px 0px 0px;
+    margin-top: 7px;
 }
 
+.alertDialog_btn {
+    min-width: 60px;
+}
 /*Css cho loading*/
 .loading {
     position: absolute;
-    top: -100px;
+    top: 0;
     bottom: 0;
     left: 0;
     right: 0;
-    background: url('../../images/ajax-loading.gif') no-repeat center;
+    background: url('/Contents/images/ajax-loading.gif') no-repeat center;
     background-color: #ccc;
     opacity: 0.4;
     background-size: 150px;
@@ -1978,7 +2012,7 @@ button.alertDialog_btnCancel {
 .exclamation {
     width: 16px;
     height: 16px;
-    background: url('../../images/exclamation.png') no-repeat;
+    background: url('/Contents/images/exclamation.png') no-repeat;
     background-size: 16px;
     margin-top: 15px;
     display: none;
@@ -2015,12 +2049,12 @@ button.alertDialog_btnCancel {
 }
 
 .view-document span.input-dropdown-icon, .view-document span.input-search-icon, .view-document span.input-calendar-icon, .view-document .left-item-input-with-icon-disabled, .view-document .icon-arrow-down,
-.edit-document span.input-dropdown-icon.dropdown-supplier, .edit-document span.input-search-icon.search-icon-supplier, .edit-document .left-item-input-with-icon-disabled,
+.edit-document span.input-dropdown-icon.dropdown-supplier, .edit-document span.input-search-icon.search-icon-supplier, .edit-document .left-item-input-with-icon-disabled
 {
     display: none;
 }
 
 .view-document input[fieldName="PersonCode"], .view-document input[fieldName="EmployeeCode"], .view-document input[fieldName="DocumentTypeName"],
-.edit-document .formDetail-info-paydebt input[fieldName="PersonCode"] {
+.edit-document .formDetail-info-paydebt input[fieldName="PersonCode"], .formDetail-info-paydebt input[fieldName="PersonCode"] {
     width: 100%;
 }

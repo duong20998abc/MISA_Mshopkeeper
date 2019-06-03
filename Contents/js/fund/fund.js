@@ -295,6 +295,10 @@ $(document).ready(function () {
     //$('.footer-content_detail-table-data input[dataType="number"]').focusout(function () {
     //    $(this).val(parseInt($(this).val()).formatNumber());
     //}); 
+
+    $('input').focusout(function () {
+        $(this).css('outline', 'none');
+    });
 });
 
 //Hàm xử lý khi bấm ra ngoài dropdown menu sẽ tự động ẩn các dropdown menu đó 
