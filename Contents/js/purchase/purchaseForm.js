@@ -54,7 +54,9 @@ class PurchaseFormDialog {
     // Định dạng tiền tệ
     // Người tạo: ntxuan (29/5/2019)
     validateFormatCurrency() {
-        $('[data-thousands="."]').maskNumber({ integer: true });        $(".row-empty [fieldName]").data("value", 0);    }
+        $('[data-thousands="."]').maskNumber({ integer: true });
+        $(".row-empty [fieldName]").data("value", 0);
+    }
 
     // Load các hàng hóa vào bảng
     // Người tạo: ntxuan (28/5/2019)
@@ -1047,9 +1049,11 @@ class PurchaseFormDialog {
                         let fieldData = $(this).attr("fieldData");
                         // Nếu ở dạng ngày tháng thì format lại dạng dd/MM/yyyy
                         if (fieldData === "Date") {
-                            invoice[fieldName] = new Date(invoice[fieldName]).toLocaleDateString('en-GB');
+                            let value = new Date(invoice[fieldName]).toLocaleDateString('en-GB');
+                            $(this).val(value);
+                        } else {
+                            $(this).val(invoice[fieldName]);
                         }
-                        $(this).val(invoice[fieldName]);
                     });
                     if (checkDuplicate) {
                         $('.purchaseForm input[fieldname="ImportNumber"]').val("NK" + Math.random().toString().substr(2, 8));

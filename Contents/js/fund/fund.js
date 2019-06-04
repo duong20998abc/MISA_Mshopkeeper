@@ -296,8 +296,17 @@ $(document).ready(function () {
     //    $(this).val(parseInt($(this).val()).formatNumber());
     //}); 
 
+    //Focus ra ngoài thì outline biến mất
+    //Tạo bởi: NBDUONG(2/6/2019)
     $('input').focusout(function () {
         $(this).css('outline', 'none');
+    });
+
+    //Bấm vào nút X ở góc trên bên phải của form thì không tự động đóng mà hiển thị form thông báo
+    //Tạo bởi: NBDUONG(4/6/2019)
+    $('div[aria-describedby="formDetail"] .ui-button-icon.ui-icon.ui-icon-closethick').click(function (e) {
+        e.stopPropagation();
+        fund.closeFormDialog();
     });
 });
 

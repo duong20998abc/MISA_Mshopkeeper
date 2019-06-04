@@ -154,8 +154,11 @@ class Fund {
         this.validateInputData();
         this.clickSave();
         this.asyncData();
+        this.formatCurrency();
     }
 
+    //Hàm bắt sự kiện cho các nút
+    //Tạo bởi: NBDUONG(10/5/2019)
     setDefaultButton() {
         $('#btnCollectMoney').click(this.addCollectMoney);
         $('#btnPayMoney').click(this.addPayMoney);
@@ -170,6 +173,8 @@ class Fund {
         //$('#formDetail #save-formDetail').click(this.alertMessage);
     }
 
+    //Hàm đồng bộ dữ liệu trong form
+    //Tạo bởi: NBDUONG(2/6/2019)
     asyncData() {
         $('input[fieldName="DocumentDate2"]').val($('input[fieldName="DocumentDate"]').val());
         $('input[fieldName="DocumentDate"]').change(function () {
@@ -584,6 +589,8 @@ class Fund {
         });
     }
 
+    //Hàm hiển thị form thông báo khi thực hiện Xóa chứng từ
+    //Tạo bởi: NBDUONG(1/6/2019)
     deleteDocumentDialog() {
         fund.alertMessage();
         $('#alertDialog').addClass("delete-form-message");
@@ -1148,10 +1155,18 @@ class Fund {
     //Tạo bởi: NBDUONG(24/5/2019)
     ifIsNaN() {
         $('input[fieldName="TotalMoney"]').blur(function () {
-            if (isNaN($(this).val())) {
-                $(this).val("0");
+            let value = $(this).val().formatToNumber();
+            if (isNaN(value)) {
+                $(this).data("0");
             }
         });
+    }
+
+    //Hàm format hiển thị tiền
+    //Tạo bởi: NBDUONG(4/6/2019)
+    formatCurrency() {
+        $('input[data-thousands="."]').maskNumber({ integer: true });
+        //$('.')
     }
 
     //Bấm vào 1 hàng trong dropdown menu có dữ liệu -> input ở trên hiển thị dữ liệu tương ứng với dữ liệu trong dòng đó
@@ -1205,7 +1220,9 @@ class Fund {
             $(this).parent().hide();
         });
     }
-    
+
+    //Hàm hiển thị form thông báo khi thực hiện đóng form
+    //Tạo bởi: NBDUONG(28/5/2019)
     closeFormDialog() {
         fund.alertMessage();
         $('#alertDialog').addClass("close-form-message");
@@ -1215,6 +1232,8 @@ class Fund {
         fund.changeButtonMessageDialog();
     }
 
+    //Click vào nút Đóng trong form thì hiển thị thông báo
+    //Tạo bởi: NBDUONG(28/5/2019)
     closeFormMessage() {
         $('body').on('click', '#btnCloseFormDialog', function () {
             fund.closeFormDialog();
@@ -1233,6 +1252,8 @@ class Fund {
         });
     }
 
+    //Hàm lấy giá trị trước đó khi input chứa số chứng từ bị xóa trắng
+    //Tạo bởi: NBDUONG(1/6/2019)
     getCurrentDocumentCode() {
         $('input[fieldName="DocumentCode"]').change(function () {
             if ($(this).val() === "") {
@@ -1291,6 +1312,8 @@ class Fund {
         $("#formDetail .formDetail-info.formDetail-info-paydebt input[fieldName='PersonName']").eq(0).prop('disabled', true);
     }
 
+    //Hàm xử lý khi chọn nút "Xem"
+    //Tạo bởi: NBDUONG(28/5/2019)
     viewDocument() {
         fund.checkViewForm = true;
         fund.checkEditForm = false;
@@ -1303,6 +1326,8 @@ class Fund {
         fund.loadDataToForm();
     }
 
+    //Hàm xử lý khi chọn nút "Sửa"
+    //Tạo bởi: NBDUONG(28/5/2019)
     editDocument() {
         fund.checkEditForm = true;
         fund.checkViewForm = false;
@@ -1315,6 +1340,8 @@ class Fund {
         fund.enableInput();
     }
 
+    //Hàm xử lý khi chọn nút "Nhân bản"
+    //Tạo bởi: NBDUONG(28/5/2019)
     duplicateDocument() {
         fund.allowHotKeyInForm = true;
         fund.allowHotKey = false;
@@ -1360,6 +1387,7 @@ class Fund {
     }
 
     //Hàm hiện thông báo khi lưu
+    //Tạo bởi: NBDUONG(9/5/2019)
     alertMessage() {
         fund.messageDialog.openDialog();
         $('span#ui-id-3').text("MShopkeeper");
@@ -1367,6 +1395,9 @@ class Fund {
         $('.alertDialog-icon').removeClass('alert-icon-question');
     }
 
+    //Hàm push dữ liệu vào trong form
+    //Có check xem đó là form xem, form sửa, hay form nhân bản
+    //Tạo bởi: NBDUONG(28/5/2019)
     loadDataToForm(checkDuplicate) {
         let documentId = $('.middle-content_table-data .table-row.choose-background').data("DocumentId");
         $.ajax({
@@ -1383,7 +1414,8 @@ class Fund {
                             //var value = response[fieldName];
                             var value = new Date(response[fieldName]).toLocaleDateString('en-GB');
                             $(this).val(value);
-                        } else {
+                        }
+                        else {
                             $(this).val(response[fieldName]);
                         }
                     });
