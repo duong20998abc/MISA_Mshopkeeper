@@ -1,10 +1,10 @@
-﻿$(document).ready(function () {
-});
+﻿
+
 
 // Lóp này để điều khiển hành động mua hàng
 // Người tạo: NTXUAN (28/04/2019)
-class Purchase {
-
+class Purchase  {
+   
     // Hàm khởi tạo
     // Người tạo: NTXUAN (28/04/2019)
     constructor() {
@@ -58,48 +58,28 @@ class Purchase {
             TypeFilter: TypeFilter
         };
         // Gọi ajax post dữ liệu lên server
-        $.ajax({
-            method: "Post",
-            url: "/purchase/getDataFilter",
-            data: JSON.stringify(IvoiceDto),
-            contentType: "application/json;charset=utf-8",
-            dataType: "json",
-            success: function (result) {
-                if (result) {
-                    purchase.renderListInvoice(true, result);
-                } else {
-                    alert("lỗi");
-                }
-            },
-            error: function (errormessage) {
-                alert(errormessage.responseText);
+        common.callAjaxToServer("Post", "/purchase/getDataFilter", IvoiceDto, function (result) {
+            if (result) {
+                purchase.renderListInvoice(true, result);
+            } else {
+                alert("lỗi");
             }
         });
     }
-
+   
     // Hàm sắp xếp các hóa đơn theo ngày nhập
     // Người tạo: ntxuan (23/5/2019)
     sortInvoiceByImportDate() {
         $(".content-right .header-column1 input").change(function () {
             if ($(this).val() !== "") {
-                let dateObject = $(this).datepicker("getDate");
-                let dateString = $.datepicker.formatDate("yy-mm-dd", dateObject);
-                let dateChange = dateString + ' 00:00:00';
+                let dateChange = common.convertStringJSToStringCsharp(this);
                 let invoiceDto = {
                     FromDate: dateChange,
                     ToDate: dateChange
                 };
                 // Thực hiện load các hóa đơn có ngày tháng được chọn
-                let url = "/purchase/Invoices";
-                $.ajax({
-                    method: "Post",
-                    url: url,
-                    data: JSON.stringify(invoiceDto),
-                    contentType: "application/json;charset=utf-8",
-                    dataType: "json",
-                    success: function (result) {
-                        purchase.renderListInvoice(true, result);
-                    }
+                common.callAjaxToServer("Post", "/purchase/Invoices", invoiceDto, function (result) {
+                    purchase.renderListInvoice(true, result);
                 });
             }
         });
@@ -110,47 +90,34 @@ class Purchase {
             let toDate = $(".content-right .inputDateTo");
             $(".content-right .header-column1 input").val("");
             if (fromDate.val() !== "" && toDate.val() !== "") {
-                let dateObject1 = $(fromDate).datepicker("getDate");
-                let dateString1 = $.datepicker.formatDate("yy-mm-dd", dateObject1);
-                let fromDateString = dateString1 + ' 00:00:00';
-                let dateObject2 = $(toDate).datepicker("getDate");
-                let dateString2 = $.datepicker.formatDate("yy-mm-dd", dateObject2);
-                let toDateString = dateString2 + ' 00:00:00';
+                let fromDateString = common.convertStringJSToStringCsharp(fromDate);
+                let toDateString = common.convertStringJSToStringCsharp(toDate);
                 let invoiceDto = {
                     FromDate: fromDateString,
                     ToDate: toDateString
                 };
                 // Thực hiện load các hóa đơn có ngày tháng được chọn
-                let url = "/purchase/Invoices";
-                $.ajax({
-                    method: "Post",
-                    url: url,
-                    data: JSON.stringify(invoiceDto),
-                    contentType: "application/json;charset=utf-8",
-                    dataType: "json",
-                    success: function (result) {
-                        purchase.renderListInvoice(true, result);
-                    }
+                common.callAjaxToServer("Post", "/purchase/Invoices", invoiceDto, function (result) {
+                    purchase.renderListInvoice(true, result);
                 });
             }
         });
     }
-
+    
+    
     // Hủy các sự kiện click khi không có dữ liệu hóa đơn
     // Người tạo: ntxuan (20/5/2019)
     setDisableEventButtonMenubar() {
-        $(".content-right .btn-Delete").addClass("disable-button");
-        $(".content-right .btnDuplicate").addClass("disable-button");
-        $(".content-right .btnView").addClass("disable-button");
-        $(".content-right .btnEdit").addClass("disable-button");
+        if ($(".content-right .list-content-invoice .row-clicked").length > 0) {
+            $(".content-right .disable-button").removeClass("disable-button");
+        } else {
+            $(".content-right .btn-Delete").addClass("disable-button");
+            $(".content-right .btnDuplicate").addClass("disable-button");
+            $(".content-right .btnView").addClass("disable-button");
+            $(".content-right .btnEdit").addClass("disable-button");
+        }
     }
-
-    // Đặt lại sự kiện click khi có dữ liệu hóa đơn
-    // Người tạo: ntxuan (20/5/2019)
-    setEnableEventButtonMenubar() {
-        $(".content-right .disable-button").removeClass("disable-button");
-    }
-
+    
     // Thiết lập các sự kiện về phân trang
     // Người tạo: ntxuan (19/5/2019)
     setAllEventPaging() {
@@ -189,12 +156,12 @@ class Purchase {
     // Người tạo: ntxuan (16/5/2019)
     setValueTimeRange() {
         // Mới đầu thì mặc định là tháng này
-        changeDateTimeByCase("5", $(".inputDateFrom"), $(".inputDateTo"));
+        common.changeDateTimeByCase("5", $(".inputDateFrom"), $(".inputDateTo"));
       
         // Nếu thay đổi thì hiển thị tương ứng
         $(".content-right .list-header-second select").change(function () {
             let value = $(this).val();
-            changeDateTimeByCase(value, $(".inputDateFrom"), $(".inputDateTo"));
+            common.changeDateTimeByCase(value, $(".inputDateFrom"), $(".inputDateTo"));
         });
     }
 
@@ -267,40 +234,53 @@ class Purchase {
                 window.open("http://help.mshopkeeper.vn/170101_nhap_hang.htm", '_blank');
                 event.preventDefault();
             }
-            // Bấm mũi tên xuống thì chuyển load dữ liệu các sản phẩm của hóa đơn
-            if (event.keyCode === 40) {
-                if (purchase.allowHotKey) {
-                    let rowFocus = $(".content-right .wrapp-dataTable .row-clicked");
-                    purchase.loadInvoicePreviousOrNext(rowFocus, "next");
-                }
-                event.preventDefault();
-            }
             // Bấm mũi tên lên thì chuyển load dữ liệu các sản phẩm của hóa đơn
             if (event.keyCode === 38) {
                 if (purchase.allowHotKey) {
                     let rowFocus = $(".content-right .wrapp-dataTable .row-clicked");
                     purchase.loadInvoicePreviousOrNext(rowFocus, "previous");
+                    purchase.autoRenderScrollTop();
+                }
+                event.preventDefault();
+            }
+            // Bấm mũi tên xuống thì chuyển load dữ liệu các sản phẩm của hóa đơn
+            if (event.keyCode === 40) {
+                if (purchase.allowHotKey) {
+                    let rowFocus = $(".content-right .wrapp-dataTable .row-clicked");
+                    purchase.loadInvoicePreviousOrNext(rowFocus, "next");
+                    purchase.autoRenderScrollTop();
                 }
                 event.preventDefault();
             }
         });
     }
 
+    // Tự động sinh thanh cuộn khi chiều cao dài quá
+    // Người tạo: ntxuan(10/6/2019)
+    autoRenderScrollTop() {
+        let scrollTop = $(".list-content-invoice .row-clicked").offset().top - 229;
+        let heightTableData = $(".list-content-invoice").height();
+        if (scrollTop > heightTableData) {
+            $(".list-content-invoice").scrollTop($(".list-content-invoice").scrollTop() + heightTableData);
+        } else if (scrollTop < 0) {
+            $(".list-content-invoice").scrollTop($(".list-content-invoice").scrollTop() - heightTableData + 36);
+        }
+    }
+
     // Hàm dùng để đổ dữ liệu lấy từ server các hóa đơn
     // Người tạo: ntxuan (23/5/2019)
     renderListInvoice(checkLoadProduct, result) {
         $(".list-content-invoice .row-data").remove();
+        $(".item-index .check").find("img").attr("src", "");
         // Xóa dữ liệu cũ
         $(".content-right .list-data-bottom .detail-data").remove();
         if (result.length === 0) {
-            purchase.setDisableEventButtonMenubar();
             $(".content-right .list-data-bottom .background-loading").hide();
         } else {
             if (checkLoadProduct) {
                 // Thực hiện load danh sách các sản phẩm của hóa đơn đầu tiên
                 purchase.loadProductsForInvoice(result[0].InvoiceId);
             }
-            purchase.setEnableEventButtonMenubar();
             // Vòng lặp để đổ dữ liệu các hóa đơn ra giao diện hiển thị
             $.each(result, function (i, invoice) {
                 $(".row-data-invoice-clone span").each(function () {
@@ -328,26 +308,20 @@ class Purchase {
             // Thiết lập hàng đầu tiên được checked
             $(".list-content-invoice .row-data:first").addClass("row-clicked");
         }
+        purchase.setDisableEventButtonMenubar();
     }
 
     // Hàm lấy dữ liệu các hóa đơn từ server
     // Người tạo: ntxuan (11/5/2019)
     getDataFromServer(checkLoadProduct) {
         $(".list-content-invoice .background-loading").show();
-        // Thực hiện ajax lên server lấy các hóa đơn để đổ dữ liệu vào client
-        $.ajax({
-            method: "Get",
-            url: "/purchase",
-            contentType: "json",
-            dataType: "json",
-            success: function (result) {
+        common.callAjaxToServer("Get", "/purchase", null, function (result) {
                 $(".list-content-invoice .background-loading").hide();
                 if (result) {
                     purchase.renderListInvoice(checkLoadProduct, result);
                 } else {
                     alert("Lỗi server lấy dữ liệu các hóa đơn");
                 }
-            }
         });
     }
 
@@ -361,37 +335,31 @@ class Purchase {
         $(".content-right .list-data-bottom .background-loading").show();
         let url = "/purchase/GetProducs/" + invoiceId;
         // Thực hiện load các sản phẩm từ server theo id của hóa đơn truyền vào
-        $.ajax({
-            method: "Post",
-            url: url,
-            contentType: "json",
-            dataType: "json",
-            success: function (result) {
-                if (result) {
-                    $(".content-right .list-data-bottom .background-loading").hide();
-                    // Vòng lặp đổ dữ liệu các sản phẩm vào body chứa danh sách sản phẩm
-                    $.each(result, function (i, product) {
-                        $(".content-right .list-data-bottom").append($(".list-data-bottom-clone").html());
-                        $(".content-right .list-data-bottom .detail-data:last span").each(function () {
-                            let fieldName = $(this).attr("fieldName");
-                            let fieldData = $(this).attr("fieldData");
-                            if (fieldData === "Number") {
-                                $(this).text(product[fieldName].formatNumber());
-                                $(this).data("value", product[fieldName]);
-                            } else {
-                                $(this).text(product[fieldName]);
-                            }
-                        });
-                        // Nếu dòng chẵn thì cho màu background khác dòng lẻp
-                        if (i % 2 !== 0) {
-                            $(".content-right .list-data-bottom .detail-data:last").addClass("row-add");
+        common.callAjaxToServer("Post", url, null, function (result) {
+            if (result) {
+                $(".content-right .list-data-bottom .background-loading").hide();
+                // Vòng lặp đổ dữ liệu các sản phẩm vào body chứa danh sách sản phẩm
+                $.each(result, function (i, product) {
+                    $(".content-right .list-data-bottom").append($(".list-data-bottom-clone").html());
+                    $(".content-right .list-data-bottom .detail-data:last span").each(function () {
+                        let fieldName = $(this).attr("fieldName");
+                        let fieldData = $(this).attr("fieldData");
+                        if (fieldData === "Number") {
+                            $(this).text(product[fieldName].formatNumber());
+                            $(this).data("value", product[fieldName]);
+                        } else {
+                            $(this).text(product[fieldName]);
                         }
                     });
-                    // Đồng bộ hóa lại dòng tổng tiền thanh toán cuối trang
-                    purchase.asyncRowTotalMoney(".content-right");
-                } else {
-                    alert("Lỗi server lấy dữ liệu các sản phẩm");
-                }
+                    // Nếu dòng chẵn thì cho màu background khác dòng lẻp
+                    if (i % 2 !== 0) {
+                        $(".content-right .list-data-bottom .detail-data:last").addClass("row-add");
+                    }
+                });
+                // Đồng bộ hóa lại dòng tổng tiền thanh toán cuối trang
+                purchase.asyncRowTotalMoney(".content-right");
+            } else {
+                alert("Lỗi server lấy dữ liệu các sản phẩm");
             }
         });
     }
@@ -402,33 +370,27 @@ class Purchase {
         let invoiceId = $(".content-right .wrapp-dataTable .row-clicked").data("InvoiceId");
         let url = "/purchase/GetProducs/" + invoiceId;
         // Thực hiện load các sản phẩm từ server theo id của hóa đơn truyền vào
-        $.ajax({
-            method: "Post",
-            url: url,
-            contentType: "json",
-            dataType: "json",
-            success: function (result) {
-                if (result) {
-                    $(".form-addNew .list-data-bottom .other-row").remove();
-                    // Vòng lặp đổ dữ liệu các sản phẩm vào body chứa danh sách sản phẩm
-                    $.each(result, function (i, product) {
-                        $(".row-dataProduct-form-clone [fieldname]").each(function () {
-                            let fieldName = $(this).attr("fieldname");
-                            let typeTag = $(this).attr("typeTag");
-                            $(this).data("value", product[fieldName]);
-                            if (typeTag === "input") {
-                                $(this).val(product[fieldName].toLocaleString("de-DE"));
-                            } else {
-                                $(this).text(product[fieldName].toLocaleString("de-DE"));
-                            }
-                        });
-                        $(".form-addNew .list-data-bottom").prepend($(".row-dataProduct-form-clone .other-row").clone(true));
+        common.callAjaxToServer("Post", url, null, function (result) {
+            if (result) {
+                $(".form-addNew .list-data-bottom .other-row").remove();
+                // Vòng lặp đổ dữ liệu các sản phẩm vào body chứa danh sách sản phẩm
+                $.each(result, function (i, product) {
+                    $(".row-dataProduct-form-clone [fieldname]").each(function () {
+                        let fieldName = $(this).attr("fieldname");
+                        let typeTag = $(this).attr("typeTag");
+                        $(this).data("value", product[fieldName]);
+                        if (typeTag === "input") {
+                            $(this).val(product[fieldName].toLocaleString("de-DE"));
+                        } else {
+                            $(this).text(product[fieldName].toLocaleString("de-DE"));
+                        }
                     });
-                    // Đồng bộ hóa lại dòng tổng tiền thanh toán cuối trang
-                    purchase.asyncRowTotalMoney(".form-addNew .footer-content-right");
-                } else {
-                    alert("Lỗi server lấy dữ liệu các sản phẩm");
-                }
+                    $(".form-addNew .list-data-bottom").prepend($(".row-dataProduct-form-clone .other-row").clone(true));
+                });
+                // Đồng bộ hóa lại dòng tổng tiền thanh toán cuối trang
+                purchase.asyncRowTotalMoney(".form-addNew .footer-content-right");
+            } else {
+                alert("Lỗi server lấy dữ liệu các sản phẩm");
             }
         });
     }
@@ -468,20 +430,11 @@ class Purchase {
             let invoiceId = $(".content-right .wrapp-dataTable .row-clicked").data("InvoiceId");
             let url = "/purchase/DeleteInvoice/" + invoiceId;
             // Dùng ajax gửi id lên server để xóa
-            $.ajax({
-                method: "Post",
-                url: url,
-                contentType: "application/json;charset=utf-8",
-                dataType: "json",
-                success: function (status) {
-                    if (status) {
-                        purchase.getDataFromServer(true);
-                    } else {
-                        alert("lỗi");
-                    }
-                },
-                error: function (errormessage) {
-                    alert(errormessage.responseText);
+            common.callAjaxToServer("Post", url, null, function (result) {
+                if (result) {
+                    purchase.getDataFromServer(true);
+                } else {
+                    alert("lỗi");
                 }
             });
         }
@@ -567,6 +520,7 @@ class Purchase {
                     if (!prevent) {
                         if (event.ctrlKey) {
                             $(focus).parent().addClass("row-clicked");
+                            purchase.checkStatusAllRowSelected();
                         } else {
                             $(".content-right .wrapp-dataTable .row-data img").attr("src", "");
                             $(".content-right .wrapp-dataTable .row-clicked").removeClass("row-clicked");
@@ -598,6 +552,20 @@ class Purchase {
         });
     }
 
+    // Kiểm tra xem các hàng có được click chọn không
+    // Người tạo: ntxuan (10/5/2019)
+    checkStatusAllRowSelected() {
+        let sumChecked = $(".content-right .list-content-invoice .row-clicked").length;
+        let sumRow = $(".content-right .list-content-invoice .row-data").length;
+        if (sumChecked === sumRow) {
+            $(".item-index .check").find("img").attr("src", "/Contents/images/check.png");
+            $(".data-index .check img").attr("src", "/Contents/images/check.png");
+            $(".wrapp-dataTable .row-data").addClass("row-clicked");
+        } else {
+            $(".item-index .check").find("img").attr("src", "");
+        }
+    }
+
     // Thiết lập hiển thị checked cho các ô checkox
     // Người tạo: NTXUAN (29/04/2019)
     setStatusChecked() {
@@ -614,6 +582,7 @@ class Purchase {
                 $(".data-index .check img").attr("src", "");
                 $(".wrapp-dataTable .row-data").removeClass("row-clicked");
             }
+            purchase.setDisableEventButtonMenubar();
         });
 
         // Check một ô và hủy một ô
@@ -625,6 +594,8 @@ class Purchase {
                 $(this).find("img").attr("src", "");
                 $(this).closest(".row-data").removeClass("row-clicked");
             }
+            purchase.checkStatusAllRowSelected();
+            purchase.setDisableEventButtonMenubar();
         });
 
         // Xét background cho một dòng dữ liệu khi click vào
@@ -763,6 +734,10 @@ class Purchase {
         });
     }
 }
+
+// Khởi tạo biến dùng chung
+var common = new Common();
+
 // Khởi tạo một đối tượng mua hàng
 // Người tạo: NTXUAN (28/04/2019)
 var purchase = new Purchase();

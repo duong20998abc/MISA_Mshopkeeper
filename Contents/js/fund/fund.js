@@ -22,8 +22,16 @@ $(document).ready(function () {
         changeMonth: true,
         changeYear: true,
         dateFormat: "dd/mm/yy",
-        yearRange: '1900:2099'
+        yearRange: '1900:2099',
+        showButtonPanel: true
     });
+
+    $.datepicker._gotoToday = function (id) {
+        var inst = this._getInst($(id)[0]);
+
+        var date = new Date();
+        this._selectDay(id, date.getMonth(), date.getFullYear(), inst.dpDiv.find('td.ui-datepicker-today'));
+    };
 
     //Bấm icon hình cuốn lịch để hiện ra datetimepicker tương ứng với input
     //Tạo bởi: NBDUONG (3/5/2019)
@@ -135,28 +143,6 @@ $(document).ready(function () {
 
     //Bấm vào input radio để lựa chọn Khác hoặc Trả nợ trong form Thêm phiếu chi
     //Tạo bởi: NBDUONG(6/5/2019)
-    $(".formDetail_navigation-bar #radio1").change(function () {
-        if ($(this).is(":checked")) {
-            //formContext.setDefaultClickRadio1();
-            $('.formDetail-info-other').show();
-            $('.formDetail-info-paydebt').hide();
-            $('.navigation-bar_item.choose-pay-recipt').hide();
-        }
-    });
-
-    //Bấm vào input radio để lựa chọn Khác hoặc Trả nợ trong form Thêm phiếu chi
-    //Tạo bởi: NBDUONG(6/5/2019)
-    $(".formDetail_navigation-bar #radio2").change(function () {
-        if ($(this).is(":checked")) {
-            //formContext.setDefaultClickRadio2();
-            $('.formDetail-info-paydebt').show();
-            $('.formDetail-info-other').hide();
-            $('.navigation-bar_item.choose-pay-recipt').show();
-        }
-    });
-
-    //Bấm vào input radio để lựa chọn Khác hoặc Trả nợ trong form Thêm phiếu chi
-    //Tạo bởi: NBDUONG(6/5/2019)
     $('.reciptFormDetail_tableData .table-row').click(function () {
         $(this).find('input').prop('checked', true);
         $(".reciptFormDetail_tableData .table-row.choose-background").removeClass("choose-background");
@@ -239,7 +225,7 @@ $(document).ready(function () {
     });
 
     //Bấm vào checkbox trong form chọn hóa đơn
-    $('.choose-row-receiptForm').click(function () {
+    $('body').on('click', '.choose-row-receiptForm', function () {
         if ($(this).find('img').attr('src') === '') {
             $(this).find('img').attr('src', '/Contents/images/check.png');
             $(this).addClass('non-background');
@@ -273,10 +259,6 @@ $(document).ready(function () {
         $(this).next().toggle();
     });
 
-    //Lấy ngày mặc định là ngày hiện tại trong các input về ngày
-    //Tạo bởi: NBDUONG (8/5/2019)
-    //fund.getCurrentDate();
-
     //Bấm vào dòng được chọn
     //Tạo bởi: NBDUONG (8/5/2019)
     $('.footer-content_detail-table-data .detail-table-data_list-data .table-row.flex').on('click', function () {
@@ -290,12 +272,6 @@ $(document).ready(function () {
         $(this).attr('placeholder', 'Nhập dữ liệu');
     });
 
-    //Bấm ra ngoài thì input dạng number sẽ hiển thị val theo dạng số
-    //Tạo bởi: NBDUONG(16/5/2019)
-    //$('.footer-content_detail-table-data input[dataType="number"]').focusout(function () {
-    //    $(this).val(parseInt($(this).val()).formatNumber());
-    //}); 
-
     //Focus ra ngoài thì outline biến mất
     //Tạo bởi: NBDUONG(2/6/2019)
     $('input').focusout(function () {
@@ -307,6 +283,10 @@ $(document).ready(function () {
     $('div[aria-describedby="formDetail"] .ui-button-icon.ui-icon.ui-icon-closethick').click(function (e) {
         e.stopPropagation();
         fund.closeFormDialog();
+        if ($(this).closest('.ui-dialog-titlebar').next().hasClass('view-document')) {
+            fund.check.closeDialog();
+            fund.messageDialog.closeDialog();
+        }
     });
 });
 

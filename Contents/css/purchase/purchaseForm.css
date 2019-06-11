@@ -1123,6 +1123,11 @@ input.DateInput {
 * {
 }
 
+
+body {
+    overflow: hidden;
+}
+
 .form-addNew.purchaseForm.purchaseViewForm .row-empty {
     display: none;
 }
@@ -1684,4 +1689,22 @@ div#ui-id-1 {
     position: absolute;
     top: 4px;
     left: 6px;
+}
+.purchaseForm .btn-prev-view,
+.purchaseForm .btn-next-view {
+    pointer-events: none;
+    opacity: 0.4;
+}
+.form-addNew.purchaseForm .btn-prev-view span,
+.form-addNew.purchaseForm .btn-next-view span{
+    pointer-events: none;
+    opacity: 1;
+}
+.enable-button {
+    pointer-events: auto !important;
+    opacity: 1 !important;
+}
+.disable-button{
+    pointer-events: none;
+    opacity: 0.4;
 }

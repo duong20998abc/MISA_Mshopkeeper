@@ -61,28 +61,19 @@ class PurchaseFormDialog {
     // Load các hàng hóa vào bảng
     // Người tạo: ntxuan (28/5/2019)
     loadMerchandise() {
-        $.ajax({
-            method: "Get",
-            url: "/purchase/getListMerchandise",
-            contentType: "application/json;charset=utf-8",
-            dataType: "json",
-            success: function (result) {
-                if (result) {
-                    $(".table-sku_body").html("");
-                    $.each(result, function (index, product) {
-                        $(".table-sku_row-clone .row-left").text(product.SKU);
-                        $(".table-sku_row-clone .row-center").text(product.Barcode);
-                        $(".table-sku_row-clone .row-right").text(product.ProductName);
-                        $(".table-sku_row-clone .table-sku_body_row").data("product", product);
+        common.callAjaxToServer("Get", "/purchase/getListMerchandise", null, function (result) {
+            if (result) {
+                $(".table-sku_body").html("");
+                $.each(result, function (index, product) {
+                    $(".table-sku_row-clone .row-left").text(product.SKU);
+                    $(".table-sku_row-clone .row-center").text(product.Barcode);
+                    $(".table-sku_row-clone .row-right").text(product.ProductName);
+                    $(".table-sku_row-clone .table-sku_body_row").data("product", product);
 
-                        $(".table-sku_body").append($(".table-sku_row-clone .table-sku_body_row").clone(true));
-                    });
-                } else {
-                    alert("lỗi");
-                }
-            },
-            error: function (errormessage) {
-                alert(errormessage.responseText);
+                    $(".table-sku_body").append($(".table-sku_row-clone .table-sku_body_row").clone(true));
+                });
+            } else {
+                alert("lỗi");
             }
         });
     }
@@ -118,22 +109,11 @@ class PurchaseFormDialog {
         $(".content-right .wrapp-dataTable .row-clicked").each(function () {
             listInvoiceId.push($(this).data("InvoiceId"));
         });
-
-        $.ajax({
-            method: "Post",
-            url: "/purchase/DeleteMultiInvoice",
-            data: JSON.stringify(listInvoiceId),
-            contentType: "application/json;charset=utf-8",
-            dataType: "json",
-            success: function (status) {
-                if (status) {
-                    purchase.getDataFromServer(true);
-                } else {
-                    alert("lỗi");
-                }
-            },
-            error: function (errormessage) {
-                alert(errormessage.responseText);
+        common.callAjaxToServer("Post", "/purchase/DeleteMultiInvoice", listInvoiceId, function (result) {
+            if (result) {
+                purchase.getDataFromServer(true);
+            } else {
+                alert("lỗi");
             }
         });
     }
@@ -153,52 +133,46 @@ class PurchaseFormDialog {
     // Người tạo: ntxuan (13/5/2019)
     loadSuppliersFromServer() {
         // Thực hiện ajax gọi các nhà cung cấp từ server
-        $.ajax({
-            method: "Get",
-            url: "/purchase/GetSuppliers",
-            contentType: "json",
-            dataType: "json",
-            success: function (result) {
-                if (result) {
-                    purchaseFormDialog.supplierCodes = [];
-                    purchaseFormDialog.supplierNames = [];
-                    // Xóa trắng nội dung của bảng dữ liệu để đổ dữ liệu mới
-                    $(".purchaseForm .form-choose-supplier.supplier .form-choose-supplier_tables-body").html("");
-                    $(".purchaseForm .supplier-table.table1 .supplier-table_body").html("");
-                    // Thực hiện vòng lặp đổ dữ liệu từ mảng dữ liệu lấy từ server
-                    $.each(result, function (i, supplier) {
-                        // Đổ dữ liệu cho mảng
-                        purchaseFormDialog.supplierCodes.push(supplier["SupplierCode"]);
-                        purchaseFormDialog.supplierNames.push(supplier["SupplierName"]);
+        common.callAjaxToServer("Get", "/purchase/GetSuppliers", null, function (result) {
+            if (result) {
+                purchaseFormDialog.supplierCodes = [];
+                purchaseFormDialog.supplierNames = [];
+                // Xóa trắng nội dung của bảng dữ liệu để đổ dữ liệu mới
+                $(".purchaseForm .form-choose-supplier.supplier .form-choose-supplier_tables-body").html("");
+                $(".purchaseForm .supplier-table.table1 .supplier-table_body").html("");
+                // Thực hiện vòng lặp đổ dữ liệu từ mảng dữ liệu lấy từ server
+                $.each(result, function (i, supplier) {
+                    // Đổ dữ liệu cho mảng
+                    purchaseFormDialog.supplierCodes.push(supplier["SupplierCode"]);
+                    purchaseFormDialog.supplierNames.push(supplier["SupplierName"]);
 
-                        // Đổ dữ liệu cho chọn nhà cung cấp theo form
-                        $(".supplier-row-clone div[fieldName]").each(function () {
-                            let fieldName = $(this).attr("fieldName");
-                            $(this).text(supplier[fieldName]);
-                        });
-                        $(".supplier-row-clone .row-supplier-item").data("SupplierId", supplier["SupplierId"]);
-                        // Append div vừa đổ dữ liệu vào body
-                        $(".purchaseForm .form-choose-supplier.supplier .form-choose-supplier_tables-body").append($(".supplier-row-clone .row-supplier-item").clone(true));
-                        if (i % 2 !== 0) {
-                            $(".form-choose-supplier.supplier .form-choose-supplier_tables-body .row-supplier-item:last-child").addClass("row-add");
-                        }
-
-                        // Đổ dữ liệu cho chọn nhà cung cấp nhanh
-                        let listElements2 = $(".supplier-table-row-clone div[fieldName]");
-                        $.each(listElements2, function (i, element) {
-                            let fieldName = $(element).attr("fieldName");
-                            $(element).text(supplier[fieldName]);
-                        });
-                        $(".supplier-table-row-clone .supplier-table_body-row").data("SupplierId", supplier["SupplierId"]);
-                        $(".purchaseForm .supplier-table.table1 .supplier-table_body").append($(".supplier-table-row-clone .supplier-table_body-row").clone(true));
+                    // Đổ dữ liệu cho chọn nhà cung cấp theo form
+                    $(".supplier-row-clone div[fieldName]").each(function () {
+                        let fieldName = $(this).attr("fieldName");
+                        $(this).text(supplier[fieldName]);
                     });
-                    // Focus vào dòng dữ liệu đầu tiên
-                    $(".form-choose-supplier.supplier .form-choose-supplier_tables-body .row-supplier-item:first-child").addClass("row-checked");
-                    // Check vào button radio đầu tiên
-                    $(".form-choose-supplier.supplier .form-choose-supplier_tables-body .row-supplier-item:first-child input").prop("checked", true);
-                } else {
-                    alert("lỗi server lấy dữ liệu nhà cung cấp");
-                }
+                    $(".supplier-row-clone .row-supplier-item").data("SupplierId", supplier["SupplierId"]);
+                    // Append div vừa đổ dữ liệu vào body
+                    $(".purchaseForm .form-choose-supplier.supplier .form-choose-supplier_tables-body").append($(".supplier-row-clone .row-supplier-item").clone(true));
+                    if (i % 2 !== 0) {
+                        $(".form-choose-supplier.supplier .form-choose-supplier_tables-body .row-supplier-item:last-child").addClass("row-add");
+                    }
+
+                    // Đổ dữ liệu cho chọn nhà cung cấp nhanh
+                    let listElements2 = $(".supplier-table-row-clone div[fieldName]");
+                    $.each(listElements2, function (i, element) {
+                        let fieldName = $(element).attr("fieldName");
+                        $(element).text(supplier[fieldName]);
+                    });
+                    $(".supplier-table-row-clone .supplier-table_body-row").data("SupplierId", supplier["SupplierId"]);
+                    $(".purchaseForm .supplier-table.table1 .supplier-table_body").append($(".supplier-table-row-clone .supplier-table_body-row").clone(true));
+                });
+                // Focus vào dòng dữ liệu đầu tiên
+                $(".form-choose-supplier.supplier .form-choose-supplier_tables-body .row-supplier-item:first-child").addClass("row-checked");
+                // Check vào button radio đầu tiên
+                $(".form-choose-supplier.supplier .form-choose-supplier_tables-body .row-supplier-item:first-child input").prop("checked", true);
+            } else {
+                alert("lỗi server lấy dữ liệu nhà cung cấp");
             }
         });
     }
@@ -207,54 +181,48 @@ class PurchaseFormDialog {
     // Người tạo: ntxuan (13/5/2019)
     loadEmployeesFromServer() {
         // Thực hiện ajax gọi tới server lấy các nhân viên về
-        $.ajax({
-            method: "Get",
-            url: "/purchase/GetEmployees",
-            contentType: "json",
-            dataType: "json",
-            success: function (result) {
-                if (result) {
-                    purchaseFormDialog.employeeCodes = [];
-                    purchaseFormDialog.employeeNames = [];
-                    // Xóa trắng nội dung của body để đổ dữ liệu mới
-                    $(".purchaseForm .form-choose-supplier.employee .form-choose-supplier_tables-body").html("");
-                    $(".purchaseForm .supplier-table.table2 .supplier-table_body").html("");
-                    // Thực hiện vòng lặp đổ mảng dữ liệu nhân viên lấy từ server vào một div clone
-                    $.each(result, function (i, employee) {
-                        // Đổ dữ liệu cho mảng
-                        purchaseFormDialog.employeeCodes.push(employee["EmployeeCode"]);
-                        purchaseFormDialog.employeeNames.push(employee["EmployeeName"]);
+        common.callAjaxToServer("Get", "/purchase/GetEmployees", null, function (result) {
+            if (result) {
+                purchaseFormDialog.employeeCodes = [];
+                purchaseFormDialog.employeeNames = [];
+                // Xóa trắng nội dung của body để đổ dữ liệu mới
+                $(".purchaseForm .form-choose-supplier.employee .form-choose-supplier_tables-body").html("");
+                $(".purchaseForm .supplier-table.table2 .supplier-table_body").html("");
+                // Thực hiện vòng lặp đổ mảng dữ liệu nhân viên lấy từ server vào một div clone
+                $.each(result, function (i, employee) {
+                    // Đổ dữ liệu cho mảng
+                    purchaseFormDialog.employeeCodes.push(employee["EmployeeCode"]);
+                    purchaseFormDialog.employeeNames.push(employee["EmployeeName"]);
 
-                        let listElements = $(".employee-row-clone div[fieldName]");
-                        $.each(listElements, function (i, element) {
-                            let fieldName = $(element).attr("fieldName");
-                            $(element).text(employee[fieldName]);
-                        });
-                        $(".employee-row-clone .row-supplier-item").data("EmployeeId", employee["EmployeeId"]);
-                        // Append div clone đó vào phần body hiển thị
-                        $(".purchaseForm .form-choose-supplier.employee .form-choose-supplier_tables-body").append($(".employee-row-clone .row-supplier-item").clone(true));
-                        // Nếu dòng chẵn thì có background màu khác dòng lẻ
-                        if (i % 2 !== 0) {
-                            $(".form-choose-supplier.employee .form-choose-supplier_tables-body .row-supplier-item:last-child").addClass("row-add");
-                        }
-
-                        // Đổ dữ liệu cho chọn nhà cung cấp nhanh
-                        let listElements2 = $(".employee-table-row-clone div[fieldName]");
-                        $.each(listElements2, function (i, element) {
-                            let fieldName = $(element).attr("fieldName");
-                            $(element).text(employee[fieldName]);
-                        });
-                        $(".employee-table-row-clone .supplier-table_body-row").data("EmployeeId", employee["EmployeeId"]);
-                        $(".purchaseForm .supplier-table.table2 .supplier-table_body").append($(".employee-table-row-clone .supplier-table_body-row").clone(true));
+                    let listElements = $(".employee-row-clone div[fieldName]");
+                    $.each(listElements, function (i, element) {
+                        let fieldName = $(element).attr("fieldName");
+                        $(element).text(employee[fieldName]);
                     });
-                    // Xét trạng thái checked cho dòng đầu tiên
-                    $(".form-choose-supplier.employee .form-choose-supplier_tables-body .row-supplier-item:first-child").addClass("row-checked");
-                    // Xét trạng thái checked cho input radio đầu tiên
-                    $(".form-choose-supplier.employee .form-choose-supplier_tables-body .row-supplier-item:first-child input").prop("checked", true);
+                    $(".employee-row-clone .row-supplier-item").data("EmployeeId", employee["EmployeeId"]);
+                    // Append div clone đó vào phần body hiển thị
+                    $(".purchaseForm .form-choose-supplier.employee .form-choose-supplier_tables-body").append($(".employee-row-clone .row-supplier-item").clone(true));
+                    // Nếu dòng chẵn thì có background màu khác dòng lẻ
+                    if (i % 2 !== 0) {
+                        $(".form-choose-supplier.employee .form-choose-supplier_tables-body .row-supplier-item:last-child").addClass("row-add");
+                    }
 
-                } else {
-                    alert("Lỗi server lấy dữ liệu nhân viên");
-                }
+                    // Đổ dữ liệu cho chọn nhà cung cấp nhanh
+                    let listElements2 = $(".employee-table-row-clone div[fieldName]");
+                    $.each(listElements2, function (i, element) {
+                        let fieldName = $(element).attr("fieldName");
+                        $(element).text(employee[fieldName]);
+                    });
+                    $(".employee-table-row-clone .supplier-table_body-row").data("EmployeeId", employee["EmployeeId"]);
+                    $(".purchaseForm .supplier-table.table2 .supplier-table_body").append($(".employee-table-row-clone .supplier-table_body-row").clone(true));
+                });
+                // Xét trạng thái checked cho dòng đầu tiên
+                $(".form-choose-supplier.employee .form-choose-supplier_tables-body .row-supplier-item:first-child").addClass("row-checked");
+                // Xét trạng thái checked cho input radio đầu tiên
+                $(".form-choose-supplier.employee .form-choose-supplier_tables-body .row-supplier-item:first-child input").prop("checked", true);
+
+            } else {
+                alert("Lỗi server lấy dữ liệu nhân viên");
             }
         });
     }
@@ -265,21 +233,11 @@ class PurchaseFormDialog {
         let invoiceId = $(".content-right .wrapp-dataTable .row-clicked").data("InvoiceId");
         invoice["InvoiceId"] = invoiceId;
         // Gọi ajax post dữ liệu lên server
-        $.ajax({
-            method: "Post",
-            url: "/purchase/SaveEditInvoice",
-            data: JSON.stringify(invoice),
-            contentType: "application/json;charset=utf-8",
-            dataType: "json",
-            success: function (invoiceId) {
-                for (var i = 0; i < invoicesDetails.length; i++) {
-                    invoicesDetails[i].invoiceId = invoiceId;
-                }
-                purchaseFormDialog.pushListInvoiceDetailToServer(invoicesDetails);
-            },
-            error: function (errormessage) {
-                alert(errormessage.responseText);
+        common.callAjaxToServer("Post", "/purchase/SaveEditInvoice", invoice, function (result) {
+            for (var i = 0; i < invoicesDetails.length; i++) {
+                invoicesDetails[i].invoiceId = result;
             }
+            purchaseFormDialog.pushListInvoiceDetailToServer(invoicesDetails);
         });
     }
 
@@ -520,10 +478,7 @@ class PurchaseFormDialog {
         $(".Invoice input[fieldName]").each(function () {
             let fieldName = $(this).attr("fieldName");
             if ($(this).attr("fieldData") === "Date") {
-                let dateObject = $(this).datepicker("getDate");
-                let dateString = $.datepicker.formatDate("yy-mm-dd", dateObject);
-                let dateCurrent = new Date();
-                invoice[fieldName] = dateString + dateCurrent.getFullTimeCurrent();
+                invoice[fieldName] = common.convertStringJSToStringCsharp(this);
             } else {
                 invoice[fieldName] = $(this).val();
             }
@@ -547,21 +502,11 @@ class PurchaseFormDialog {
             purchaseFormDialog.saveEditInvoiceToServer(invoice, invoicesDetails);
         } else {
             // Gọi ajax post dữ liệu lên server
-            $.ajax({
-                method: "Post",
-                url: "/purchase/SaveNewInvoice",
-                data: JSON.stringify(invoice),
-                contentType: "application/json;charset=utf-8",
-                dataType: "json",
-                success: function (invoiceId) {
-                    for (var i = 0; i < invoicesDetails.length; i++) {
-                        invoicesDetails[i].invoiceId = invoiceId;
-                    }
-                    purchaseFormDialog.pushListInvoiceDetailToServer(invoicesDetails);
-                },
-                error: function (errormessage) {
-                    alert(errormessage.responseText);
+            common.callAjaxToServer("Post", "/purchase/SaveNewInvoice", invoice, function (result) {
+                for (var i = 0; i < invoicesDetails.length; i++) {
+                    invoicesDetails[i].invoiceId = result;
                 }
+                purchaseFormDialog.pushListInvoiceDetailToServer(invoicesDetails);
             });
         }
     }
@@ -569,21 +514,11 @@ class PurchaseFormDialog {
     // Lưu danh sách các hóa đơn chi tiết lên server
     // Người tạo: ntxuan (28/5/2019)
     pushListInvoiceDetailToServer(invoicesDetails) {
-        $.ajax({
-            method: "Post",
-            url: "/purchase/SaveListInvoiceDetail",
-            data: JSON.stringify(invoicesDetails),
-            contentType: "application/json;charset=utf-8",
-            dataType: "json",
-            success: function (invoiceId) {
-                if (invoiceId) {
-                    purchase.getDataFromServer(true);
-                } else {
-                    alert("lỗi");
-                }
-            },
-            error: function (errormessage) {
-                alert(errormessage.responseText);
+        common.callAjaxToServer("Post", "/purchase/SaveListInvoiceDetail", invoicesDetails, function (result) {
+            if (result) {
+                purchase.getDataFromServer(true);
+            } else {
+                alert("lỗi");
             }
         });
     }
@@ -683,22 +618,24 @@ class PurchaseFormDialog {
             purchaseFormDialog.openPurchaseAddNewForm();
         });
 
-        // Nếu bấm vào sau thì về xem
-        $(".form-addNew_listMenu  .next,.form-addNew_listMenu  .icon3").click(function () {
-            purchaseFormDialog.closePurchaseForm();
-            let rowFocus = $(".content-right .wrapp-dataTable .row-clicked");
-            purchase.loadInvoicePreviousOrNext(rowFocus, "next");
-            purchase.resetFormCommon();
-            purchaseFormDialog.openPurchaseViewForm();
-        });
-
         // Nếu bấm vào trước thì về xem
-        $(".form-addNew_listMenu  .previousbtn,.form-addNew_listMenu  .icon1").click(function () {
+        $(".form-addNew_listMenu  .btn-prev-view").click(function () {
             purchaseFormDialog.closePurchaseForm();
             let rowFocus = $(".content-right .wrapp-dataTable .row-clicked");
             purchase.loadInvoicePreviousOrNext(rowFocus, "previous");
             purchase.resetFormCommon();
             purchaseFormDialog.openPurchaseViewForm();
+            purchaseFormDialog.checkButtonNextAndPrev();
+        });
+
+        // Nếu bấm vào sau thì về xem
+        $(".form-addNew_listMenu  .btn-next-view").click(function () {
+            purchaseFormDialog.closePurchaseForm();
+            let rowFocus = $(".content-right .wrapp-dataTable .row-clicked");
+            purchase.loadInvoicePreviousOrNext(rowFocus, "next");
+            purchase.resetFormCommon();
+            purchaseFormDialog.openPurchaseViewForm();
+            purchaseFormDialog.checkButtonNextAndPrev();
         });
 
         // Nếu bấm vào đóng thì ẩn form
@@ -1029,6 +966,8 @@ class PurchaseFormDialog {
         $('.purchaseForm input[fieldname="ExpenditureNumber"]').val(expenditureNumber).attr("data-previous", expenditureNumber);
         $('.purchaseForm input[fieldname="ReasonExpenditure"]').val("Thanh toán tiền nhập hàng hóa");
         $(".form-addNew .list-data-bottom .other-row").remove();
+        $(".btn-prev-view").removeClass("enable-button");
+        $(".btn-next-view").removeClass("enable-button");
     }
 
     // Đổ dữ liệu vào form xem hóa đơn
@@ -1037,32 +976,26 @@ class PurchaseFormDialog {
         let invoiceId = $(".content-right .wrapp-dataTable .row-clicked").data("InvoiceId");
         let url = "/purchase/Invoice/" + invoiceId;
         // Thực hiện load các sản phẩm từ server theo id của hóa đơn truyền vào
-        $.ajax({
-            method: "Post",
-            url: url,
-            contentType: "json",
-            dataType: "json",
-            success: function (invoice) {
-                if (invoice) {
-                    $(".purchaseForm .Invoice input[fieldname]").each(function () {
-                        let fieldName = $(this).attr("fieldName");
-                        let fieldData = $(this).attr("fieldData");
-                        // Nếu ở dạng ngày tháng thì format lại dạng dd/MM/yyyy
-                        if (fieldData === "Date") {
-                            let value = new Date(invoice[fieldName]).toLocaleDateString('en-GB');
-                            $(this).val(value);
-                        } else {
-                            $(this).val(invoice[fieldName]);
-                        }
-                    });
-                    if (checkDuplicate) {
-                        $('.purchaseForm input[fieldname="ImportNumber"]').val("NK" + Math.random().toString().substr(2, 8));
-                        $('.purchaseForm input[fieldname="ExpenditureNumber"]').val("PC" + Math.random().toString().substr(2, 8));
-                        purchaseFormDialog.setValueDefault();
+        common.callAjaxToServer("Post", url, null, function (invoice) {
+            if (invoice) {
+                $(".purchaseForm .Invoice input[fieldname]").each(function () {
+                    let fieldName = $(this).attr("fieldName");
+                    let fieldData = $(this).attr("fieldData");
+                    // Nếu ở dạng ngày tháng thì format lại dạng dd/MM/yyyy
+                    if (fieldData === "Date") {
+                        let value = new Date(invoice[fieldName]).toLocaleDateString('en-GB');
+                        $(this).val(value);
+                    } else {
+                        $(this).val(invoice[fieldName]);
                     }
-                } else {
-                    alert("Lỗi server lấy dữ liệu hóa đơn theo id");
+                });
+                if (checkDuplicate) {
+                    $('.purchaseForm input[fieldname="ImportNumber"]').val("NK" + Math.random().toString().substr(2, 8));
+                    $('.purchaseForm input[fieldname="ExpenditureNumber"]').val("PC" + Math.random().toString().substr(2, 8));
+                    purchaseFormDialog.setValueDefault();
                 }
+            } else {
+                alert("Lỗi server lấy dữ liệu hóa đơn theo id");
             }
         });
     }
@@ -1078,6 +1011,22 @@ class PurchaseFormDialog {
         purchaseFormDialog.checkViewForm = true;
         purchaseFormDialog.checkEditForm = true;
         purchase.loadProductToPurchaseForm();
+        purchaseFormDialog.checkButtonNextAndPrev();
+    }
+
+    // Kiểm tra trạng thái button trước sau form xem
+    // Người tạo : ntxuan (10/6/2019)
+    checkButtonNextAndPrev() {
+        if ($(".content-right .list-data-table .row-data:first").hasClass("row-clicked")) {
+            $(".purchaseViewForm .btn-prev-view").removeClass("enable-button");
+            $(".purchaseViewForm .btn-next-view").addClass("enable-button");
+        } else if ($(".content-right .list-data-table .row-data:last").hasClass("row-clicked")) {
+            $(".purchaseViewForm .btn-prev-view").addClass("enable-button");
+            $(".purchaseViewForm .btn-next-view").removeClass("enable-button");
+        } else {
+            $(".purchaseViewForm .btn-prev-view").addClass("enable-button");
+            $(".purchaseViewForm .btn-next-view").addClass("enable-button");
+        }
     }
 
     // Hàm mở form thêm mới phiếu nhập hàng
@@ -1347,10 +1296,6 @@ class PurchaseFormDialog {
     // Validate và tính toán lại dữ liệu trên một hàng
     // Người tạo: ntxuan(10/5/2019)
     validateDataRow(rowfocus) {
-        // Số lượng
-        let quantity = rowfocus.find(".detailData5 input");
-        // Đơn giá
-        let unitPrice = rowfocus.find(".detailData6 input");
         // Thành tiền
         let sumMoney = rowfocus.find(".detailData7 input");
         // %CK

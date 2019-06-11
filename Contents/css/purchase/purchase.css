@@ -33,7 +33,7 @@
 }
 
 .row-data.flex {
-    line-height: 40px;
+    line-height: 35px;
     background: white;
     border-bottom: 1px solid #bdb1b175;
 }
@@ -477,7 +477,7 @@ span.icon.inventoryitem {
 .content-right {
     padding-top: 55px;
     margin-left: 100px;
-    height: calc(100% - 55px);
+    height: calc(100% - 49px);
 }
 
 .list-header-top {
@@ -732,12 +732,12 @@ input#dp1556802722719 {
 }
 
 .data-index .check {
-    margin-top: 13px;
+    margin-top: 11px;
 }
 
 .data-index {
     width: 4%;
-    min-height: 38px;
+    min-height: 35px;
     border-right: 1px solid #cec7c7;
     border-left: 1px solid #cec7c7;
 }
@@ -748,7 +748,7 @@ input#dp1556802722719 {
 
 .data-column1, .data-column2, .data-column4 {
     width: 9%;
-    min-height: 38px;
+    min-height: 35px;
     border-right: 1px solid #cec7c7;
 }
 
@@ -758,13 +758,13 @@ input#dp1556802722719 {
 
 .data-column3, .data-column6 {
     width: 28%;
-    min-height: 38px;
+    min-height: 35px;
     border-right: 1px solid #cec7c7;
 }
 
 .data-column5 {
     width: 14%;
-    min-height: 38px;
+    min-height: 35px;
     border-right: 1px solid #cec7c7;
 }
 
@@ -1076,7 +1076,7 @@ span.text9 {
 
     .content-right .footer-content-body {
         overflow-y: hidden;
-        height: 203px;
+        height: 199px;
         overflow-x: hidden;
     }
 
@@ -1108,7 +1108,3 @@ span.text.format-right {
     width: 93%;
 }
 
-.disable-button {
-    pointer-events: none;
-    opacity: 0.4;
-}

@@ -790,7 +790,7 @@ span.column-text {
 }
 
     .table-row:hover {
-        background: #EAEFF4 !important;
+        background: #EAEFF4;
     }
 
 .data-item_first-column .choose-all {
@@ -1181,13 +1181,17 @@ formDetail_tab_blank-space {
     cursor: default;
 }
 
-.formDetail-list-button .list-button_item.button-display, .view-document #add-formDetail, .view-document #delete-formDetail, .view-document #edit-formDetail, .view-document #print-formDetail, .view-document .document-after {
+.formDetail-list-button .list-button_item.button-display, .view-document #add-formDetail, .view-document #delete-formDetail,
+.view-document #edit-formDetail, .view-document #print-formDetail, .view-document .document-after, .edit-document #postpone-formDetail, .view-document .document-before {
     color: #fff;
     cursor: pointer;
     pointer-events: auto;
+    opacity: 1;
 }
 
-    .formDetail-list-button .list-button_item.button-display span, .view-document #add-formDetail span, .view-document #delete-formDetail span, .view-document #edit-formDetail span, .view-document #print-formDetail span, .view-document .document-after span, .view-document .document-after div {
+    .formDetail-list-button .list-button_item.button-display span, .view-document #add-formDetail span, .view-document #delete-formDetail span,
+    .view-document #edit-formDetail span, .view-document #print-formDetail span, .view-document .document-after span, .view-document .document-after div,
+    .view-document .document-before div, .view-document .document-before span, .edit-document #postpone-formDetail span {
         opacity: 1;
     }
 
@@ -2045,7 +2049,12 @@ button.alertDialog_btnCancel, .delete-form-message {
 /*Tạo bởi: NBDUONG(28/5/2019)*/
 .view-document .choose-pay-recipt {
     display: none;
+    line-height: 34px;
 }
+
+    .view-document .choose-pay-recipt span {
+        margin-left: 30px;
+    }
 
 .view-document #save-formDetail {
     pointer-events: none;

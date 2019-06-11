@@ -37,6 +37,10 @@ class Dialog {
         if ($('input').parent().hasClass('border-red')) {
             $('input').parent().removeClass('border-red');
         }
+        $('.formDetail_table-detail-data').show();
+        $('.formDetail_table-document-data').hide();
+        $('.formDetail_intro-detail').css('border-bottom', '2px solid #026b97').css('color', '#026b97');
+        $('.formDetail_intro-document').css('border-bottom', 'none').css('color', '#757575');   
     }
 
     // Đóng 1 dialog
@@ -90,3 +94,5 @@ class Dialog {
         $(".select-date-pay").attr("data-previous", dateTimeNow);
     }
 }
+
+var common = new Common();

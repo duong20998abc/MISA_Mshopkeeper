@@ -472,12 +472,12 @@
             <!-- Tạo bởi: NBDUONG(3/5/2019) -->
             <div class="formDetail-list-button flex">
                 <div class="list-button_item flex left-float">
-                    <div class="document-before left-float" style="margin-right: 10px;">
+                    <div class="document-before left-float" style="margin-right: 10px;" id="before-formDetail" title="F7">
                         <div class="icon icon-previous left-float"></div>
                         <span class="text left-float" style="line-height: 16px;">Trước</span>
                         <div class="icon icon-caret-down left-float"></div>
                     </div>
-                    <div class="document-after left-float">
+                    <div class="document-after left-float" id="after-formDetail" title="F8">
                         <span class="text left-float" style="line-height: 16px;">Sau</span>
                         <div class="icon icon-next left-float"></div>
                         <div class="icon icon-caret-down left-float"></div>
@@ -740,16 +740,16 @@
                                             <input type="text" name="name" value="" tabindex="0" fieldName="DocumentDate2" style="width: 86%; padding-right: 10px"/>
                                         </div>
                                         <div class="document-data-item_second-column detail-data-item left-float">
-                                            <input type="text" name="name" value="" tabindex="0" fieldName="DocumentCode" />
+                                            <input type="text" name="name" value="" tabindex="0" fieldName="DocumentCode"/>
                                         </div>
                                         <div class="document-data-item_first-column detail-data-item left-float">
-                                            <input type="text" name="name" value="" tabindex="0" fieldName="MoneyHasToPay" dataType="number" style="width: 86%; padding-right: 10px"/>
+                                            <input type="text" name="name" value="" tabindex="0" fieldName="MoneyHasToPay" data-thousands="." dataType="number" style="width: 86%; padding-right: 10px"/>
                                         </div>
                                         <div class="document-data-item_first-column detail-data-item left-float" >
-                                            <input type="text" name="name" value="" tabindex="0" fieldName="MoneyHasNotPaid" dataType="number" style="width: 86%; padding-right: 10px"/>
+                                            <input type="text" name="name" value="" tabindex="0" fieldName="MoneyHasNotPaid" data-thousands="." dataType="number" style="width: 86%; padding-right: 10px"/>
                                         </div>
                                         <div class="document-data-item_first-column detail-data-item left-float">
-                                            <input type="text" name="name" value="" tabindex="0" fieldName="AmountPaid" dataType="number" style="width: 86%; padding-right: 10px"/>
+                                            <input type="text" name="name" value="" tabindex="0" fieldName="AmountPaid" data-thousands="." dataType="number" style="width: 86%; padding-right: 10px"/>
                                         </div>
                                     </div>
                                 </div>
@@ -936,7 +936,7 @@
                                         </div>
                                         <div class="detail-data-item_first-column detail-data-item left-float" style="position: relative">
                                             <div class="left-item-input-with-icon left-float flex document-type-input">
-                                                <input type="text" name="name" value="" class="left-float" tabindex="0" fieldName="DocumentTypeName"/>
+                                                <input type="text" name="name" value="" class="left-float" tabindex="0" fieldName="DocumentType"/>
                                                 <div class="icon icon-arrow-down left-float document-type-arrow"></div>
                                             </div>
                                             <div class="focusguard" id="focusguard-2" tabindex="0"></div>
@@ -978,9 +978,13 @@
                 </div>
 
                 <div class="formDetail_general-info_left-item_list-input left-float">
+                    <div class="field-data-hidden" style="display:none">
+                        <input type="text" name="name" fieldName="PersonId" value="" hidden />
+                        <input type="text" name="name" fieldName="DocumentTypeId" value="" hidden />
+                    </div>
                     <div class="left-item-input flex" style="position:relative">
                         <div class="left-item-input-with-icon left-float flex" style="position: relative">
-                            <input type="text" value="" class="left-float supplier-name-paydebt" tabindex="1"/>
+                            <input type="text" value="" class="left-float supplier-name-paydebt" tabindex="1" />
                             <span class="input-dropdown-icon left-float"></span>
                             <div class="left-item-input-with-icon-disabled recipeForm_disableMoneyPaid"></div>
 
@@ -1007,14 +1011,14 @@
                                         </div>
                                         <div class="detail-data-item_second-column detail-data-item left-float" fieldName="PersonName" style="width:60%">
                                             <span></span>
-                                        </div> 
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div class="left-item-input left-item-without-icon flex">
-                        <input type="text" value="0" dataType="number" style="padding-right: 8px" class="input-paidMoney" tabindex="4"/>
+                        <input type="text" value="0" dataType="number" data-thousands="." style="padding-right: 8px" class="input-paidMoney" tabindex="4" />
                     </div>
                 </div>
             </div>
@@ -1077,17 +1081,17 @@
                         <div class="detail-data-item_second-column detail-data-item left-float" dataType="date" fieldName="DocumentDate">
                             <span></span>
                         </div>
-                        <div class="detail-data-item_second-column detail-data-item left-float" dataType="number" fieldName="DocumentCode">
+                        <div class="detail-data-item_second-column detail-data-item left-float" fieldName="DocumentCode">
                             <span></span>
                         </div>
                         <div class="detail-data-item_second-column detail-data-item left-float hasToPay" dataType="number" fieldName="MoneyHasToPay">
-                            <span fieldName="hastoPay"></span>
+                            <span></span>
                         </div>
-                        <div class="detail-data-item_second-column detail-data-item left-float hasNotPaid" dataType="number" fieldName="MoneyHasNotPaid">
-                            <span fieldName="hasNotPaid"></span>
+                        <div class="detail-data-item_second-column detail-data-item left-float hasNotPaid" dataType="number" >
+                            <span fieldName="MoneyHasNotPaid"></span>
                         </div>
-                        <div class="detail-data-item_second-column detail-data-item left-float amountPaid" style="border-right: none" dataType="number" fieldName="AmountPaid">
-                            <span fieldName="amountPaid"></span>
+                        <div class="detail-data-item_second-column detail-data-item left-float amountPaid" style="border-right: none" dataType="number" >
+                            <span fieldName="AmountPaid"></span>
                         </div>
                     </div>
                 </div>
@@ -1097,7 +1101,7 @@
                     <div class="detail-total-money-row_second-column total-money-column left-float"></div>
                     <div class="detail-total-money-row_second-column total-money-column left-float totalMoneyHasToPay" dataType="number"><span></span></div>
                     <div class="detail-total-money-row_second-column total-money-column left-float totalMoneyHasNotPaid" dataType="number"><span></span></div>
-                    <div class="detail-total-money-row_second-column total-money-column left-float" dataType="number"></div>
+                    <div class="detail-total-money-row_second-column total-money-column left-float totalAmountPaid" dataType="number" fieldName ="TotalAmountPaid"><span></span></div>
                 </div>
             </div>
         </div>

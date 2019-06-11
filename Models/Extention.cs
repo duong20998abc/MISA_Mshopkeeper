@@ -239,6 +239,7 @@ namespace MISA.Mshopkeeper.Models
             document.DocumentDate = documentAjaxResult.DocumentDate;
             document.DocumentTypeId = documentAjaxResult.DocumentTypeId;
             document.Reason = documentAjaxResult.Reason;
+            document.ReceiverName = documentAjaxResult.ReceiverName;
             document.TotalMoney = documentAjaxResult.TotalMoney;
             document.PersonId = documentAjaxResult.PersonId;
             document.AmountPaid = documentAjaxResult.AmountPaid;
@@ -271,6 +272,7 @@ namespace MISA.Mshopkeeper.Models
             document.DocumentDate = documentAjaxResult.DocumentDate;
             document.DocumentTypeId = documentAjaxResult.DocumentTypeId;
             document.Reason = documentAjaxResult.Reason;
+            document.ReceiverName = documentAjaxResult.ReceiverName;
             document.TotalMoney = documentAjaxResult.TotalMoney;
             document.PersonId = documentAjaxResult.PersonId;
             document.AmountPaid = documentAjaxResult.AmountPaid;

@@ -247,5 +247,29 @@ namespace MISA.Mshopkeeper.Controllers
                 return false;
             }
         }
-    }
+
+        /// <summary>
+        /// Hàm xóa nhiều chứng từ cùng 1 lúc
+        /// </summary>
+        /// <param name="listID"></param>
+        /// <returns></returns>
+        /// Tạo bởi: NBDUONG(7/6/2019)
+        [HttpPost]
+        [Route("documents/delete/listDocuments")]
+        public bool DeleteMultiDocument(List<Guid> listID)
+        {
+            try
+            {
+                foreach (var item in listID)
+                {
+                    Extention.DeleteDocument(item);
+                }
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+    } 
 }

@@ -28,6 +28,8 @@ namespace MISA.Mshopkeeper.Models
         public double MoneyHasNotPaid { get; set; }
         //Số tiền đã trả
         public double AmountPaid { get; set; }
+        //Người nộp/nhận
+        public string ReceiverName { get; set; }
         //Lý do
         public string Reason { get; set; }
         //Khóa ngoại đến bảng Person

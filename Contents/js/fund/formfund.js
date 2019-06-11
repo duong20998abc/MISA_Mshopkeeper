@@ -1,14 +1,4 @@
 ﻿//Hàm Fund
-
-////Các biến để sử dụng thêm mới Dialog
-////Tạo bởi: NBDUONG(3/5/2019)
-//var check;
-//var popup;
-//var messageDialog;
-//var chooseObjectPay;
-//var chooseStaff;
-
-
 //Tạo bởi: NBDUONG (2/5/2019)
 class Fund {
     //Phương thức khởi tạo
@@ -22,13 +12,14 @@ class Fund {
                 {
                     html: '<div class="receiptFormDetail-btnHelp-icon receiptFormDetail-icon left-float"></div><span class="receiptFormDetail-btnHelp-text receiptFormDetail-text">Trợ giúp</span>',
                     class: "receiptFormDetail-btnHelp",
-                    click: function () { }
+                    click: function () { window.open("http://help.mshopkeeper.vn/170103_thu_tien_mat.htm", '_blank'); }
                 },
                 {
                     html: '<div class="receiptFormDetail-btnPayDebt-icon receiptFormDetail-icon left-float"></div><span class="receiptFormDetail-btnPayDebt-text receiptFormDetail-text">Trả nợ</span>',
                     class: "receiptFormDetail-btnPayDebt",
                     click: function () {
-                        alert('asd');
+                        fund.asyncDataFromChooseReceiptForm();
+                        fund.popup.closeDialog();
                         $('.receiptFormDetail-btnPayDebt').css('background-color', '#026b97');
                     }
                 },
@@ -119,6 +110,8 @@ class Fund {
         this.supplierNames = [];
         this.checkViewForm = false;
         this.checkEditForm = false;
+        this.checkCollect = false;
+        this.checkPay = false;
         this.allowHotKey = true;
         this.allowHotKeyInForm = false;
         //Tạo mới dialog
@@ -138,9 +131,10 @@ class Fund {
         this.autoAdjustHeight();
         this.validateData();
         this.getPaidMoney();
-        this.onRowClick();
+        this.clickRow();
         this.changeDateRangeWithOption();
         this.selectStaff();
+        this.asyncDataFromChooseReceiptForm();
         this.loadEmployeeListFromServer();
         this.loadSuppliersListFromServer();
         this.loadDocumentTypeFromServer();
@@ -155,6 +149,8 @@ class Fund {
         this.clickSave();
         this.asyncData();
         this.formatCurrency();
+        this.setEventsFormToolbar();
+        this.setEventsRadioInput();
     }
 
     //Hàm bắt sự kiện cho các nút
@@ -170,7 +166,68 @@ class Fund {
         $('.choose-pay-recipt').click(this.choosePayDebtRecipt);
         $('#choose-object').click(this.chooseObjectPay);
         $('.choose-object-paydebt').click(this.chooseStaffPaydebt);
-        //$('#formDetail #save-formDetail').click(this.alertMessage);
+        $('.reload-page').click(this.refreshDocument);
+    }
+
+    //Hàm bắt sự kiện cho các nút trong form
+    //Tạo bởi: NBDUONG(8/6/2019)
+    setEventsFormToolbar() {
+        //Bắt sự kiện cho nút Thêm mới
+        $('#formDetail #add-formDetail').click(function () {
+            let documentCode = $('.middle-content_table-data .table-row.choose-background').data("DocumentCode");
+            let subCode = documentCode.substr(0, 2);
+            if (subCode === "PC") {
+                fund.removeViewClass();
+                fund.addPayMoney();
+            } else if (subCode === "PT") {
+                fund.removeViewClass();
+                fund.addCollectMoney();
+            }
+        });
+        //Bắt sự kiện cho nút Sửa
+        $('#formDetail #edit-formDetail').click(function () {
+            fund.removeViewClass();
+            fund.editDocument();
+        });
+        //Bắt sự kiện cho nút Hoãn
+        $('#formDetail #postpone-formDetail').click(function () {
+            fund.removeViewClass();
+            fund.viewDocument();
+        });
+        //Bắt sự kiện cho nút Trợ giúp
+        $('#btnHelpFormDialog').click(function () {
+            window.open("http://help.mshopkeeper.vn/170103_thu_tien_mat.htm", '_blank');
+        });
+        //Bắt sự kiện cho nút Trước
+        $('#before-formDetail').click(function () {
+            let rowFocus = $('.middle-content_table-data .table-row.choose-background');
+            fund.loadDocumentByHotKey(rowFocus, "previous");
+            fund.loadDataToForm();
+            if ($('.middle-content_table-data .table-row.choose-background').is($('.middle-content_table-data .table-row:first-child'))) {
+                $('.view-document #before-formDetail').removeClass('document-before');
+            } else {
+                $('.view-document #before-formDetail').addClass('document-before');
+                $('.view-document #after-formDetail').addClass('document-after');
+            }
+        });
+        //Bắt sự kiện cho nút Sau
+        $('#after-formDetail').click(function () {
+            let rowFocus = $('.middle-content_table-data .table-row.choose-background');
+            fund.loadDocumentByHotKey(rowFocus, "next");
+            fund.loadDataToForm();
+            if ($('.middle-content_table-data .table-row.choose-background').is($('.middle-content_table-data .table-row:last-child'))) {
+                $('.view-document #after-formDetail').removeClass('document-after');
+            } else {
+                $('.view-document #before-formDetail').addClass('document-before');
+                $('.view-document #after-formDetail').addClass('document-after');
+            }
+        });
+    }
+
+    //Hàm loại bỏ các class trước đó khi thực hiện thay đổi qua lại giữa các form
+    //Tạo bởi: NBDUONG(8/6/2019)
+    removeViewClass() {
+        $('#formDetail').removeAttr('class');
     }
 
     //Hàm đồng bộ dữ liệu trong form
@@ -218,10 +275,10 @@ class Fund {
     //Hàm hiển thị khoảng thời gian theo lựa chọn tương ứng trong comboBox
     //Tạo bởi: NBDUONG(16/5/2019)
     changeDateRangeWithOption() {
-        changeDateTimeByCase("5", $('.select-from-date'), $('.select-to-date'));
+        common.changeDateTimeByCase("5", $('.select-from-date'), $('.select-to-date'));
         $('.select-month select').change(function () {
             let value = $(this).val();
-            changeDateTimeByCase(value, $('.select-from-date'), $('.select-to-date'));
+            common.changeDateTimeByCase(value, $('.select-from-date'), $('.select-to-date'));
         });
     }
 
@@ -245,213 +302,274 @@ class Fund {
         $('.detailTotalMoney span').text("0");
         $('.total-money-row_fifth-column span').text("0");
         $('.MISABody-part_middle-content .loading').show();
-        $.ajax({
-            type: "GET",
-            url: "/fund/documents",
-            contentType: "application/json;charset=utf-8",
-            dataType: "json",
-            success: function (response) {
+        common.callAjaxToServer("GET", "/fund/documents", null, function (response) {
+            $('.MISABody-part_middle-content .loading').hide();
+            if (response.length === 0) {
+                fund.disableButton();
+            } else {
+                fund.enableButton();
+                //Ẩn loading
                 $('.MISABody-part_middle-content .loading').hide();
-                if (response.length === 0) {
-                    fund.disableButton();
-                } else {
-                    fund.enableButton();
-                    //Ẩn loading
-                    $('.MISABody-part_middle-content .loading').hide();
-                    //Truyền dữ liệu vào mỗi cột
-                    $.each(response, function (index, item) {
-                        $('.middle-content_table-data .row-clone span').each(function () {
-                            var fieldData = $(this).parent().attr("fieldName");
-                            var dataType = $(this).parent().attr("dataType");
-                            var value = item[fieldData] ? item[fieldData] : ""; // Kiểm tra dữ liệu rỗng
-
-                            if (dataType === "date") {
-                                item[fieldData] = new Date(item[fieldData]).toLocaleDateString('en-GB');
-                                $(this).text(item[fieldData]);
-                            } else if (dataType === "number") {
-                                $(this).text(item[fieldData].formatNumber());
-                                $(this).data('value', item[fieldData]);
-                                totalMoney += $(this).data('value');
-                                $('.total-money-row_fifth-column span').text(totalMoney.formatNumber());
-                            } else {
-                                $(this).text(item[fieldData]);
-                            }
-                        });
-
-                        //Append dữ liệu vào bảng dữ liệu
-                        $('.middle-content_table-data .table-data_list-data').append($('.row-clone').html());
-                        //Gán Id cho dòng được click
-                        $('.middle-content_table-data .table-row:last-child').data("DocumentId", item["DocumentId"]);
-                        $('.middle-content_table-data .table-row:last-child').data("DocumentCode", item["DocumentCode"]);
-                        $('.middle-content_table-data .table-row:last-child').data("DocumentType", item["DocumentType"]);
-
-                        //Các dòng liền nhau có màu khác nhau
-                        if (index % 2 !== 0) {
-                            $('.middle-content_table-data .table-data_list-data .table-row:last-child').addClass('row-even');
-                        } else if (index % 2 === 0) {
-                            $('.middle-content_table-data .table-data_list-data .table-row:last-child').removeClass('row-even');
+                //Truyền dữ liệu vào mỗi cột
+                $.each(response, function (index, item) {
+                    $('.middle-content_table-data .row-clone span').each(function () {
+                        var fieldData = $(this).parent().attr("fieldName");
+                        var dataType = $(this).parent().attr("dataType");
+                        if (dataType === "date") {
+                            item[fieldData] = new Date(item[fieldData]).toLocaleDateString('en-GB');
+                            $(this).text(item[fieldData]);
+                        } else if (dataType === "number") {
+                            $(this).text(item[fieldData].formatNumber());
+                            $(this).data('value', item[fieldData]);
+                            totalMoney += $(this).data('value');
+                            $('.total-money-row_fifth-column span').text(totalMoney.formatNumber());
+                        } else {
+                            $(this).text(item[fieldData]);
                         }
-
-                        //Thiết lập hàng đầu tiên được check
-                        $(".middle-content_table-data .table-data_list-data .table-row").eq(0).addClass("choose-background");
                     });
-                    fund.loadDocumentDataDefault(response[0].DocumentId);
-                }
+
+                    //Append dữ liệu vào bảng dữ liệu
+                    $('.middle-content_table-data .table-data_list-data').append($('.row-clone').html());
+                    //Gán Id cho dòng được click
+                    $('.middle-content_table-data .table-row:last-child').data("DocumentId", item["DocumentId"]);
+                    $('.middle-content_table-data .table-row:last-child').data("DocumentCode", item["DocumentCode"]);
+                    $('.middle-content_table-data .table-row:last-child').data("DocumentType", item["DocumentType"]);
+                    $('.middle-content_table-data .table-row:last-child').data("TotalMoney", item["TotalMoney"]);
+
+                    //Các dòng liền nhau có màu khác nhau
+                    if (index % 2 !== 0) {
+                        $('.middle-content_table-data .table-data_list-data .table-row:last-child').addClass('row-even');
+                    } else if (index % 2 === 0) {
+                        $('.middle-content_table-data .table-data_list-data .table-row:last-child').removeClass('row-even');
+                    }
+
+                    //Thiết lập hàng đầu tiên được check
+                    $(".middle-content_table-data .table-data_list-data .table-row").eq(0).addClass("choose-background");
+                });
+                fund.loadDocumentDataDefault(response[0].DocumentId);
             }
         });
     }
+
+    ////Hàm lấy dữ liệu chứng từ theo đối tượng
+    ////Tạo bởi: NBDUONG(10/6/2019)
+    loadDocumentsByPerson() {
+        let personId = $('#recipeFormDetail input[fieldName="PersonId"]').val();
+        common.callAjaxToServer("GET", "/fund/documents/person/" + personId, null, function (response) {
+            $('#recipeFormDetail .reciptFormDetail_tableData .detail-table-data_list-data').html("");
+            $.each(response, function (index, item) {
+                $('#recipeFormDetail .document-by-person-row-clone span').each(function () {
+                    var fieldData = $(this).parent().attr("fieldName");
+                    var fieldName = $(this).attr("fieldName");
+                    var dataType = $(this).parent().attr("dataType");
+                    if (dataType === "date") {
+                        item[fieldData] = new Date(item[fieldData]).toLocaleDateString('en-GB');
+                        $(this).text(item[fieldData]);
+                    } else if (fieldData === "MoneyHasToPay") {
+                        $(this).text(item[fieldData].formatNumber());
+                    } else if (fieldName === "MoneyHasNotPaid" || fieldName === "AmountPaid") {
+                        $(this).text(item[fieldName].formatNumber());
+                    }
+                    else {
+                        $(this).text(item[fieldData]);
+                    }
+                });
+                //Append dữ liệu vào bảng dữ liệu
+                if (response.length !== 0) {
+                    $('#recipeFormDetail .reciptFormDetail_tableData .detail-table-data_list-data').append($('.document-by-person-row-clone').html());
+                    $('#recipeFormDetail .reciptFormDetail_tableData .detail-table-data_list-data .table-row:last-child').data("MoneyHasToPay", item["MoneyHasToPay"]);
+                    $('#recipeFormDetail .reciptFormDetail_tableData .detail-table-data_list-data .table-row:last-child').data("AmountPaid", item["AmountPaid"]);
+
+                    fund.getTotalMoney();
+                }
+            });   
+        });
+    }
+
+    //Hàm thay đổi số trả và số chưa trả tương ứng khi nhập số tiền muốn trả trong form Chọn hóa đơn trả nợ
+    //Tạo bởi: NBDUONG(14/5/2019)
+    getPaidMoney() {
+        $('.input-paidMoney').focusout(function () {
+            var inputPaidMoney = $(this).val().formatToNumber();
+            fund.getMoney(inputPaidMoney);
+            fund.getTotalMoney();
+        });
+    }
+
+    //Hàm cập nhật các giá trị tiền chưa trả và số trả trong bảng tương ứng với số trả nhập vào từ input
+    //Tạo bởi: NBDUONG(14/5/2019)
+    getMoney(money) {   
+        if (money > 0) {
+            $('#recipeFormDetail .reciptFormDetail_tableData .detail-table-data_list-data .table-row').each(function () {
+                if (money > 0) {
+                    if (money > $(this).data("MoneyHasToPay")) {
+                        money = money - $(this).data("MoneyHasToPay");
+                        $(this).data("AmountPaid", $(this).data("MoneyHasToPay"));
+                        $(this).find('[fieldName="AmountPaid"]').text($(this).data("AmountPaid").formatNumber());
+                        $(this).data("MoneyHasNotPaid", 0);
+                        $(this).find('[fieldName="MoneyHasNotPaid"]').text(0);
+                    } else {
+                        $(this).data("AmountPaid", money);
+                        $(this).find('[fieldName="AmountPaid"]').text($(this).data("AmountPaid").formatNumber());
+                        $(this).data("MoneyHasNotPaid", $(this).data("MoneyHasToPay") - money);
+                        $(this).find('[fieldName="MoneyHasNotPaid"]').text($(this).data("MoneyHasNotPaid").formatNumber());
+                        money = 0;
+                    }
+                } else {
+                    $(this).data("AmountPaid", 0);
+                    $(this).find('[fieldName="AmountPaid"]').text(0);
+                    $(this).data("MoneyHasNotPaid", $(this).data("MoneyHasToPay"));
+                    $(this).find('[fieldName="MoneyHasNotPaid"]').text($(this).data("MoneyHasNotPaid").formatNumber());
+                }
+            });
+        } 
+    }
+
+    //Hàm hiển thị tổng tiền phải trả, chưa trả và đã trả của hóa đơn thu nợ/trả nợ
+    //Tạo bởi: NBDUONG(10/6/2019)
+    getTotalMoney() {
+        let totalMoneyHasToPay = 0;
+        let amountPaid = 0;
+        let moneyHasNotPaid = 0;
+
+        $('#recipeFormDetail .reciptFormDetail_tableData .detail-table-data_list-data .table-row').each(function () {
+            totalMoneyHasToPay += parseInt($(this).data("MoneyHasToPay"));
+            amountPaid += parseInt($(this).data("AmountPaid"));
+        });
+        moneyHasNotPaid = totalMoneyHasToPay - amountPaid;
+        $(".totalMoneyHasToPay span").text(totalMoneyHasToPay.formatNumber());
+        $(".totalMoneyHasNotPaid span").text(moneyHasNotPaid.formatNumber());
+        $("div[fieldName='TotalAmountPaid']").find("span").text(amountPaid.formatNumber());    
+    }
+
     //Hàm lấy dữ liệu từ trên server
     //Tạo bởi: NBDUONG (15/5/2019)
     loadDocumentDataDefault(id) {
         $('.MISABody-part_middle-content .footer-content_detail-table-data .detail-table-data_list-data').html("");
         //Hiển thị loading
         $('.footer-content_detail-table-data .loading').show();
-        $.ajax({
-            type: "GET",
-            url: "/fund/" + id,
-            contentType: "application/json;charset=utf-8",
-            dataType: "json",
-            success: function (result) {
-                //Ẩn loading
-                $('.footer-content_detail-table-data .loading').hide();
-                //Đẩy dữ liệu vào các dòng
-                $('.footer-content_detail-table-data .footer-table-row-clone span').each(function () {
-                    let fieldName = $(this).parent().attr("fieldName");
-                    let fieldData = $(this).parent().attr("dataType");
-                    if (fieldData === "number") {
-                        $(this).text(result[fieldName].formatNumber());
-                        $('.detailTotalMoney span').text(result[fieldName].formatNumber());
-                    } else {
-                        $(this).text(result[fieldName]);
-                    }
-                });
-                $('.MISABody-part_middle-content .footer-content_detail-table-data .detail-table-data_list-data').append($('.footer-table-row-clone').html());
-            }
+        common.callAjaxToServer("GET", "/fund/" + id, null, function (result) {
+            //Ẩn loading
+            $('.footer-content_detail-table-data .loading').hide();
+            //Đẩy dữ liệu vào các dòng
+            $('.footer-content_detail-table-data .footer-table-row-clone span').each(function () {
+                let fieldName = $(this).parent().attr("fieldName");
+                let fieldData = $(this).parent().attr("dataType");
+                if (fieldData === "number") {
+                    $(this).text(result[fieldName].formatNumber());
+                    $('.detailTotalMoney span').text(result[fieldName].formatNumber());
+                } else {
+                    $(this).text(result[fieldName]);
+                }
+            });
+            $('.MISABody-part_middle-content .footer-content_detail-table-data .detail-table-data_list-data').append($('.footer-table-row-clone').html());
         });
     }
 
     //Lấy ra danh sách nhân viên từ trên sever
     //Tạo bởi: NBDUONG(17/5/2019)
     loadEmployeeListFromServer() {
-        $.ajax({
-            type: "GET",
-            url: "/purchase/GetEmployees",
-            contentType: "application/json;charset=utf-8",
-            dataType: "json",
-            success: function (result) {
-                //Xóa trắng danh sách nhân viên trước khi cập nhật lại dữ liệu mới
-                $('#formChooseStaff .reciptFormDetail_tableData .detail-table-data_list-data').html("");
-                $.each(result, function (index, item) {
-                    //Lấy ra các dòng có attribute fieldName
-                    let listElements = $(".formChooseStaff_table-row-clone div[fieldName]");
-                    $.each(listElements, function (i, element) {
-                        let fieldName = $(element).attr("fieldName");
-                        $(element).find('span').text(item[fieldName]);
-                    });
-                    //Gán dữ liệu về id của nhân viên cho dòng
-                    $('.formChooseStaff_table-row-clone .table-row').data("EmployeeId", item["EmployeeId"]);
-                    $('#formChooseStaff .reciptFormDetail_tableData .detail-table-data_list-data').append($('.formChooseStaff_table-row-clone .table-row').clone(true));
-                    //Nếu dòng có thứ tự là chẵn thì hiển thị background cho hàng chẵn
-                    if (index % 2 === 0) {
-                        $("#formChooseStaff .reciptFormDetail_tableData .detail-table-data_list-data .table-row:last-child").addClass("row-even");
-                    }
-
-                    //Lấy ra các dòng có attribute fieldName trong bảng dropdown chọn nhân viên
-                    let listElementsDropdownMenu = $('.employee-table-row-clone div[fieldName]');
-                    $.each(listElementsDropdownMenu, function (i, element) {
-                        let fieldName = $(element).attr("fieldName");
-                        $(element).find('span').text(item[fieldName]);
-                    });
-                    $('.employee-table-row-clone .table-row').data("EmployeeId", item["EmployeeId"]);
-                    fund.employeeCodes.push(item["EmployeeCode"]);
-                    fund.employeeNames.push(item["EmployeeName"]);
-                    $(".recipeFormDetail_formStaff .detail-table-data_list-data").append($(".employee-table-row-clone .table-row").clone(true));
+        common.callAjaxToServer("GET", "/purchase/GetEmployees", null, function (result) {
+            //Xóa trắng danh sách nhân viên trước khi cập nhật lại dữ liệu mới
+            $('#formChooseStaff .reciptFormDetail_tableData .detail-table-data_list-data').html("");
+            $.each(result, function (index, item) {
+                //Lấy ra các dòng có attribute fieldName
+                let listElements = $(".formChooseStaff_table-row-clone div[fieldName]");
+                $.each(listElements, function (i, element) {
+                    let fieldName = $(element).attr("fieldName");
+                    $(element).find('span').text(item[fieldName]);
                 });
-                // Xét trạng thái checked cho dòng đầu tiên
-                $("#formChooseStaff .reciptFormDetail_tableData .detail-table-data_list-data .table-row:first-child").addClass("choose-background");
-                // Xét trạng thái checked cho input radio đầu tiên
-                $("#formChooseStaff .reciptFormDetail_tableData .detail-table-data_list-data .table-row:first-child input").prop("checked", true);
-            }
+                //Gán dữ liệu về id của nhân viên cho dòng
+                $('.formChooseStaff_table-row-clone .table-row').data("EmployeeId", item["EmployeeId"]);
+                $('#formChooseStaff .reciptFormDetail_tableData .detail-table-data_list-data').append($('.formChooseStaff_table-row-clone .table-row').clone(true));
+                //Nếu dòng có thứ tự là chẵn thì hiển thị background cho hàng chẵn
+                if (index % 2 === 0) {
+                    $("#formChooseStaff .reciptFormDetail_tableData .detail-table-data_list-data .table-row:last-child").addClass("row-even");
+                }
+
+                //Lấy ra các dòng có attribute fieldName trong bảng dropdown chọn nhân viên
+                let listElementsDropdownMenu = $('.employee-table-row-clone div[fieldName]');
+                $.each(listElementsDropdownMenu, function (i, element) {
+                    let fieldName = $(element).attr("fieldName");
+                    $(element).find('span').text(item[fieldName]);
+                });
+                $('.employee-table-row-clone .table-row').data("EmployeeId", item["EmployeeId"]);
+                fund.employeeCodes.push(item["EmployeeCode"]);
+                fund.employeeNames.push(item["EmployeeName"]);
+                $(".recipeFormDetail_formStaff .detail-table-data_list-data").append($(".employee-table-row-clone .table-row").clone(true));
+            });
+            // Xét trạng thái checked cho dòng đầu tiên
+            $("#formChooseStaff .reciptFormDetail_tableData .detail-table-data_list-data .table-row:first-child").addClass("choose-background");
+            // Xét trạng thái checked cho input radio đầu tiên
+            $("#formChooseStaff .reciptFormDetail_tableData .detail-table-data_list-data .table-row:first-child input").prop("checked", true);
         });
     }
 
     //Lấy ra danh sách nhân viên từ trên sever
     //Tạo bởi: NBDUONG(17/5/2019)
     loadSuppliersListFromServer() {
-        $.ajax({
-            type: "GET",
-            url: "/fund/people",
-            contentType: "application/json;charset=utf-8",
-            dataType: "json",
-            success: function (result) {
-                //Xóa trắng danh sách nhà cung cấp trước khi cập nhật lại dữ liệu mới
-                $('#formChooseObject .reciptFormDetail_tableData .detail-table-data_list-data').html("");
-                $.each(result, function (index, item) {
-                    //Lấy ra các dòng có attribute fieldName
-                    let listElements = $(".formChooseObject_table-row-clone div[fieldName]");
-                    $.each(listElements, function (i, element) {
-                        let fieldName = $(element).attr("fieldName");
-                        $(element).find('span').text(item[fieldName]);
-                    });
-                    //Gán dữ liệu về id của nhà cung cấp cho dòng
-                    $('.formChooseObject_table-row-clone .table-row').data("PersonId", item["PersonId"]);
-                    $('#formChooseObject .reciptFormDetail_tableData .detail-table-data_list-data').append($('.formChooseObject_table-row-clone .table-row').clone(true));
-                    //Nếu dòng có thứ tự là chẵn thì hiển thị background cho hàng chẵn
-                    if (index % 2 === 0) {
-                        $("#formChooseObject .reciptFormDetail_tableData .detail-table-data_list-data .table-row:last-child").addClass("row-even");
-                    }
-
-                    //Lấy ra các dòng có attribute fieldName trong bảng dropdown chọn đối tượng (hiện tại là nhà cung cấp)
-                    let listElementsDropdownMenu = $('.recipeFormDetail_supplier-table-row-clone div[fieldName]');
-                    $.each(listElementsDropdownMenu, function (i, element) {
-                        let fieldName = $(element).attr("fieldName");
-                        $(element).find('span').text(item[fieldName]);
-                    });
-                    $('#recipeFormDetail .recipeFormDetail_supplier-table-row-clone .table-row').data("PersonId", item["PersonId"]);
-                    $("#recipeFormDetail .recipeFormDetail_formSupplier .detail-table-data_list-data").append($(".recipeFormDetail_supplier-table-row-clone .table-row").clone(true));
-
-                    //Lấy ra các dòng có attribute fieldName trong bảng dropdown chọn đối tượng (hiện tại là nhà cung cấp)
-                    let listElementsDropdown = $('.supplier-table-row-clone div[fieldName]');
-                    $.each(listElementsDropdown, function (i, element) {
-                        let fieldName = $(element).attr("fieldName");
-                        $(element).find('span').text(item[fieldName]);
-                    });
-                    $('#formDetail .supplier-table-row-clone .table-row').data("PersonId", item["PersonId"]);
-                    fund.supplierCodes.push(item["PersonCode"]);
-                    fund.supplierNames.push(item["PersonName"]);
-                    $("#formDetail .recipeFormDetail_formSupplier .detail-table-data_list-data").append($(".supplier-table-row-clone .table-row").clone(true));
+        common.callAjaxToServer("GET", "/fund/people", null, function (result) {
+            //Xóa trắng danh sách nhà cung cấp trước khi cập nhật lại dữ liệu mới
+            $('#formChooseObject .reciptFormDetail_tableData .detail-table-data_list-data').html("");
+            $.each(result, function (index, item) {
+                //Lấy ra các dòng có attribute fieldName
+                let listElements = $(".formChooseObject_table-row-clone div[fieldName]");
+                $.each(listElements, function (i, element) {
+                    let fieldName = $(element).attr("fieldName");
+                    $(element).find('span').text(item[fieldName]);
                 });
-                // Xét trạng thái checked cho dòng đầu tiên
-                $("#formChooseObject .reciptFormDetail_tableData .detail-table-data_list-data .table-row:first-child").addClass("choose-background");
-                // Xét trạng thái checked cho input radio đầu tiên
-                $("#formChooseObject .reciptFormDetail_tableData .detail-table-data_list-data .table-row:first-child input").prop("checked", true);
-            }
+                //Gán dữ liệu về id của nhà cung cấp cho dòng
+                $('.formChooseObject_table-row-clone .table-row').data("PersonId", item["PersonId"]);
+                $('#formChooseObject .reciptFormDetail_tableData .detail-table-data_list-data').append($('.formChooseObject_table-row-clone .table-row').clone(true));
+                //Nếu dòng có thứ tự là chẵn thì hiển thị background cho hàng chẵn
+                if (index % 2 === 0) {
+                    $("#formChooseObject .reciptFormDetail_tableData .detail-table-data_list-data .table-row:last-child").addClass("row-even");
+                }
+
+                //Lấy ra các dòng có attribute fieldName trong bảng dropdown chọn đối tượng (hiện tại là nhà cung cấp)
+                let listElementsDropdownMenu = $('.recipeFormDetail_supplier-table-row-clone div[fieldName]');
+                $.each(listElementsDropdownMenu, function (i, element) {
+                    let fieldName = $(element).attr("fieldName");
+                    $(element).find('span').text(item[fieldName]);
+                });
+                $('#recipeFormDetail .recipeFormDetail_supplier-table-row-clone .table-row').data("PersonId", item["PersonId"]);
+                $("#recipeFormDetail .recipeFormDetail_formSupplier .detail-table-data_list-data").append($(".recipeFormDetail_supplier-table-row-clone .table-row").clone(true));
+
+                //Lấy ra các dòng có attribute fieldName trong bảng dropdown chọn đối tượng (hiện tại là nhà cung cấp)
+                let listElementsDropdown = $('.supplier-table-row-clone div[fieldName]');
+                $.each(listElementsDropdown, function (i, element) {
+                    let fieldName = $(element).attr("fieldName");
+                    $(element).find('span').text(item[fieldName]);
+                });
+                $('#formDetail .supplier-table-row-clone .table-row').data("PersonId", item["PersonId"]);
+                fund.supplierCodes.push(item["PersonCode"]);
+                fund.supplierNames.push(item["PersonName"]);
+                $("#formDetail .recipeFormDetail_formSupplier .detail-table-data_list-data").append($(".supplier-table-row-clone .table-row").clone(true));
+            });
+            // Xét trạng thái checked cho dòng đầu tiên
+            $("#formChooseObject .reciptFormDetail_tableData .detail-table-data_list-data .table-row:first-child").addClass("choose-background");
+            // Xét trạng thái checked cho input radio đầu tiên
+            $("#formChooseObject .reciptFormDetail_tableData .detail-table-data_list-data .table-row:first-child input").prop("checked", true);
         });
     }
 
     //Lấy ra danh sách loại chứng từ tử trên sever
     //Tạo bởi: NBDUONG(20/5/2019)
     loadDocumentTypeFromServer() {
-        $.ajax({
-            type: "GET",
-            url: "/fund/documentsType",
-            contentType: "application/json;charset=utf-8",
-            dataType: "json",
-            success: function (result) {
-                //Xóa trắng danh sách nhà cung cấp trước khi cập nhật lại dữ liệu mới
-                $('.document-type-dropdown .detail-table-data_list-data').html("");
-                $.each(result, function (index, item) {
-                    //Lấy ra các dòng có attribute fieldName
-                    let element = $(".document-type-row-clone div[fieldName]");
-                    let fieldName = $(element).attr("fieldName");
-                    $(element).find('span').text(item[fieldName]);
-                    //Gán dữ liệu về id của nhà cung cấp cho dòng
-                    $(element).parent().data("DocumentTypeId", item["DocumentTypeId"]);
-                    $('.document-type-dropdown .detail-table-data_list-data').append($('.document-type-row-clone .table-row').clone(true));
-                });
-                // Xét trạng thái checked cho dòng đầu tiên
-                $(".document-type-dropdown .table-row:first-child").addClass("choose-background");
-            }
+        common.callAjaxToServer("GET", "/fund/documentsType", null, function (result) {
+            //Xóa trắng danh sách nhà cung cấp trước khi cập nhật lại dữ liệu mới
+            $('.document-type-dropdown .detail-table-data_list-data').html("");
+            $.each(result, function (index, item) {
+                //Lấy ra các dòng có attribute fieldName
+                let element = $(".document-type-row-clone div[fieldName]");
+                let fieldName = $(element).attr("fieldName");
+                $(element).find('span').text(item[fieldName]);
+                //Gán dữ liệu về id của nhà cung cấp cho dòng
+                $(element).parent().data("DocumentTypeId", item["DocumentTypeId"]);
+                $('.document-type-dropdown .detail-table-data_list-data').append($('.document-type-row-clone .table-row').clone(true));
+            });
+            // Xét trạng thái checked cho dòng đầu tiên
+            $(".document-type-dropdown .table-row:first-child").addClass("choose-background");
         });
     }
 
@@ -462,11 +580,11 @@ class Fund {
         $("#formDetail input[fieldName]").each(function () {
             let fieldData = $(this).attr("fieldName");
             if ($(this).attr("dataType") === "date") {
-                let dateString = $(this).datepicker("getDate");
-                let dateFormat = $.datepicker.formatDate("yy-mm-dd", dateString);
-                let dateCurrent = new Date();
-                document[fieldData] = dateFormat + dateCurrent.getFullTimeCurrent();
-            } 
+                document[fieldData] = common.convertStringJSToStringCsharp(this);
+            }
+            else if ($(this).attr("dataType") === "number") {
+                document[fieldData] = $(this).val().formatToNumber();
+            }
             else {
                 document[fieldData] = $(this).val();
             }
@@ -475,19 +593,9 @@ class Fund {
         if (fund.checkEditForm) {
             fund.editDocumentData(document);
         } else {
-            $.ajax({
-                type: "POST",
-                url: "/fund/documents/new",
-                data: JSON.stringify(document),
-                contentType: "application/json;charset=utf-8",
-                dataType: "json",
-                success: function () {
-                    fund.getDataFundFromServer();
-                    fund.check.closeDialog();
-                },
-                error: function (e) {
-                    alert(e.responseText);
-                }
+            common.callAjaxToServer("POST", "/fund/documents/new", document, function () {
+                fund.getDataFundFromServer();
+                fund.check.closeDialog();
             });
         }
     }
@@ -497,19 +605,9 @@ class Fund {
     editDocumentData(document) {
         let documentId = $('.middle-content_table-data .table-row.choose-background').data("DocumentId");
         document["DocumentId"] = documentId;
-        $.ajax({
-            type: "POST",
-            url: "/fund/documents/edit/" + documentId,
-            data: JSON.stringify(document),
-            contentType: "application/json;charset=utf-8",
-            dataType: "json",
-            success: function () {
-                fund.getDataFundFromServer();
-                fund.check.closeDialog();
-            },
-            error: function (e) {
-                alert(e.responseText);
-            }
+        common.callAjaxToServer("POST", "/fund/documents/edit/" + documentId, document, function () {
+            fund.getDataFundFromServer();
+            fund.check.closeDialog();
         });
     }
 
@@ -523,6 +621,14 @@ class Fund {
             flag = false;
         } else if ($('.formDetail-info.formDetail-info-other input[fieldName="EmployeeCode"]').val() === "") {
             fund.messageDialog.changeContentAlertMessage("Trường nhân viên không được bỏ trống. Vui lòng kiểm tra lại");
+            fund.messageDialog.changeIconAlertMessage("alert-icon-warning");
+            flag = false;
+        } else if ($('.formDetail-info input[fieldName="DocumentType"]').val() === "") {
+            fund.messageDialog.changeContentAlertMessage("Trường loại chứng từ không được bỏ trống. Vui lòng kiểm tra lại");
+            fund.messageDialog.changeIconAlertMessage("alert-icon-warning");
+            flag = false;
+        } else if ($('.formDetail-info input[fieldName="TotalMoney"]').val() === "" || $('.formDetail-info input[fieldName="TotalMoney"]').val() === "0") {
+            fund.messageDialog.changeContentAlertMessage("Số tiền phải lớn hơn 0. Vui lòng kiểm tra lại");
             fund.messageDialog.changeIconAlertMessage("alert-icon-warning");
             flag = false;
         }
@@ -574,18 +680,28 @@ class Fund {
     //Xóa chứng từ
     //Tạo bởi: NBDUONG(30/5/2019)
     deleteDocument() {
-        let documentId = $('.middle-content_table-data .table-row.choose-background').data("DocumentId");
-        $.ajax({
-            type: "POST",
-            url: "/fund/documents/delete/" + documentId,
-            contentType: "application/json;charset=utf-8",
-            dataType: "json",
-            success: function () {
+        if ($('.middle-content_table-data .table-row.choose-background').length > 1) {
+            fund.deleteManyDocuments();
+        }
+        else {
+            let documentId = $('.middle-content_table-data .table-row.choose-background').data("DocumentId");
+            common.callAjaxToServer("POST", "/fund/documents/delete/" + documentId, null, function () {
                 fund.getDataFundFromServer();
-            },
-            error: function (e) {
-                alert(e.responseText);
-            }
+            });
+        }
+    }
+
+    //Hàm xóa nhiều chứng từ
+    //Tạo bởi: NBDUONG(7/6/2019)
+    deleteManyDocuments() {
+        let listDocument = [];
+        $('.middle-content_table-data .table-row.choose-background').each(function () {
+            var documentId = $(this).data("DocumentId");
+            listDocument.push(documentId);
+        });
+
+        common.callAjaxToServer("POST", "/fund/documents/delete/listDocuments", listDocument, function () {
+            fund.getDataFundFromServer();
         });
     }
 
@@ -596,9 +712,13 @@ class Fund {
         $('#alertDialog').addClass("delete-form-message");
         $('span#ui-id-3').text("Xóa dữ liệu");
         fund.messageDialog.changeIconAlertMessage("alert-icon-question");
-        let documentCode = $('.middle-content_table-data .table-row.choose-background').data("DocumentCode");
-        let documentType = $('.middle-content_table-data .table-row.choose-background').data("DocumentType");
-        fund.messageDialog.changeContentAlertMessage("Bạn có chắc chắn muốn xóa " + documentType + " " + documentCode + " không");
+        if ($('.middle-content_table-data .table-row.choose-background').length > 1) {
+            fund.messageDialog.changeContentAlertMessage("Bạn có chắc chắn muốn xóa các chứng từ này không?");
+        } else {
+            let documentCode = $('.middle-content_table-data .table-row.choose-background').data("DocumentCode");
+            let documentType = $('.middle-content_table-data .table-row.choose-background').data("DocumentType");
+            fund.messageDialog.changeContentAlertMessage("Bạn có chắc chắn muốn xóa " + documentType + " " + documentCode + " không");
+        }
         fund.changeButtonMessageDialog();
     }
 
@@ -611,20 +731,34 @@ class Fund {
     //Click vào dòng trong bảng dữ liệu hiển thị với background chọn đồng thời trả về dữ liệu của dòng đó
     // Hiển thị dữ liệu tương ứng trong bảng chi tiết phía dưới
     //Tạo bởi: NBDUONG(16/5/2019)
-    onRowClick() {
-        $('body').on('click', '.middle-content_table-data .table-data_list-data .table-row.flex', function () {
-            //Bỏ background hàng chọn
-            $('.middle-content_table-data .table-row.flex').removeClass('choose-background');
-            $('.middle-content_table-data .table-row.flex .data-item_first-column').removeClass('choose-background');
-            $(this).addClass('choose-background');
+    clickRow() {
+        $('body')
+            .on('click', '.middle-content_table-data .table-data_list-data .table-row.flex', function () {
+                if (event.ctrlKey) {
+                    $(this).addClass('choose-background');
+                } else {
+                    //Bỏ background hàng chọn
+                    $('.middle-content_table-data .table-row.flex').removeClass('choose-background');
+                    $('.middle-content_table-data .table-row.flex .data-item_first-column').removeClass('choose-background');
+                    $(this).addClass('choose-background');
+                }
 
-            //Lấy ra id của chứng từ khi click vào dòng chứng từ đó
-            var id = $(this).data("DocumentId");
-            //Hiển thị loading
-            $('.footer-content_detail-table-data .loading').show();
-            fund.loadDocumentDataDefault(id);
-        });
+                //Lấy ra id của chứng từ khi click vào dòng chứng từ đó
+                var id = $(this).data("DocumentId");
+                //Hiển thị loading
+                $('.footer-content_detail-table-data .loading').show();
+                fund.loadDocumentDataDefault(id);
+            })
+            .on('dblclick', '.middle-content_table-data .table-data_list-data .table-row.flex', function () {
+                //prevent = true;
+                $('.middle-content_table-data .table-row.flex').removeClass('choose-background');
+                $('.middle-content_table-data .table-row.flex .data-item_first-column').removeClass('choose-background');
+                $(this).addClass('choose-background');
+                fund.viewDocument();
+                fund.loadDataToForm();
+            });
     }
+
 
     //Điều chỉnh độ rộng, độ dài của các cột
     //Tạo bởi: NBDUONG (6/5/2019)
@@ -703,7 +837,13 @@ class Fund {
             // Bấm ctrl + Q thì đóng form thêm mới
             if (event.ctrlKey && event.keyCode === 81) {
                 if (fund.allowHotKeyInForm) {
-                    fund.closeFormDialog();
+                    //Nếu như là form xem
+                    if (fund.checkViewForm) {
+                        fund.check.closeDialog();
+                        fund.messageDialog.closeDialog();
+                    } else {
+                        fund.closeFormDialog();
+                    }
                 }     
                 event.preventDefault();
             }
@@ -711,7 +851,12 @@ class Fund {
             // Bấm ctrl + S thì lưu thêm mới
             if (event.ctrlKey && event.keyCode === 83) {
                 if (fund.allowHotKeyInForm) {
-                    fund.saveNewDocument();
+                    if (fund.checkViewForm) {
+                        fund.getDataFundFromServer();
+                        fund.check.closeDialog();
+                    } else {
+                        fund.saveNewDocument();
+                    }
                 }
                 event.preventDefault();
             }
@@ -729,6 +874,7 @@ class Fund {
                 if (fund.allowHotKey) {
                     let rowFocus = $('.middle-content_table-data .table-row.choose-background');
                     fund.loadDocumentByHotKey(rowFocus, "next");
+                    fund.loadDataToForm();
                 }
                 event.preventDefault();
             }
@@ -737,6 +883,7 @@ class Fund {
                 if (fund.allowHotKey) {
                     let rowFocus = $('.middle-content_table-data .table-row.choose-background');
                     fund.loadDocumentByHotKey(rowFocus, "previous");
+                    fund.loadDataToForm();
                 }
                 event.preventDefault();
             }
@@ -840,7 +987,7 @@ class Fund {
         $('.supplier-name').val(supplierName);
         $('.supplier-code').val(supplierCode);
         var reasonPayDebt = "Trả nợ cho " + supplierName;
-        $('.reason-paydebt').val(reasonPayDebt);
+        $('input[fieldName="Reason"]').val(reasonPayDebt);
     }
 
     //Hàm lấy giá trị của input Số trả, nếu nhập số âm thì mặc định là 0
@@ -1090,67 +1237,6 @@ class Fund {
         });
     }
 
-    //Hàm thay đổi số trả và số chưa trả tương ứng khi nhập số tiền muốn trả trong form Chọn hóa đơn trả nợ
-    //Tạo bởi: NBDUONG(14/5/2019)
-    getPaidMoney() {
-        $('.input-paidMoney').focusout(function () {
-            var inputPaidMoney = parseInt($(this).val());
-            fund.getMoney(inputPaidMoney);
-            fund.getTotalMoney();
-        });
-    }
-
-    //Hàm cập nhật các giá trị tiền chưa trả và số trả trong bảng tương ứng với số trả nhập vào từ input
-    //Tạo bởi: NBDUONG(14/5/2019)
-    getMoney(money) {
-        var hasToPayObject = $('#recipeFormDetail .table-row .hasToPay span');
-        var amountPaidObject = $('#recipeFormDetail .table-row .amountPaid span');
-        var hasNotPaidObject = $('#recipeFormDetail .table-row .hasNotPaid span');
-
-        //Vòng lặp để thay đổi giá trị tiền chưa trả và số trả tương ứng khi nhập input số trả
-        for (var i = 0; i < hasToPayObject.length; i++) {
-            if (money > 0) {
-                let moneyHasNotPaid = parseInt(hasToPayObject[i].innerText);
-                if (money > moneyHasNotPaid) {
-                    money = parseInt(money - moneyHasNotPaid);
-                    $(amountPaidObject[i]).text(moneyHasNotPaid.formatNumber());
-                    $(hasNotPaidObject[i]).text("0");
-                } else {
-                    $(amountPaidObject[i]).text(money.formatNumber());
-                    $(hasNotPaidObject[i]).text(parseInt(moneyHasNotPaid - money));
-                    for (var j = 1; j <= hasToPayObject.length - i; j++) {
-                        $(amountPaidObject[i + j]).text("0");
-                        $(hasNotPaidObject[i + j]).text(parseInt(moneyHasNotPaid));
-                    }
-                    break;
-                }
-            }
-        }
-    }
-
-    //Tính tổng tiền phải trả và chưa trả trong form Chọn hóa đơn trả nợ
-    //Tạo bởi: NBDUONG (17/5/2019)
-    getTotalMoney() {
-        //Có thể sử dụng let hoặc var để khai báo
-        // Sử dụng let để khai báo biến chỉ hoạt động trong phạm vi khối của vòng lặp
-        let totalMoneyHasToPay = 0;
-        let totalMoneyHasNotPaid = 0;
-
-        $('#recipeFormDetail .reciptFormDetail_tableData .table-row').each(function () {
-            totalMoneyHasToPay += parseInt($(this).find('span[fieldName="hastoPay"]').text());
-            totalMoneyHasNotPaid += parseInt($(this).find('span[fieldName="hasNotPaid"]').text());
-        });
-
-        $('.totalMoneyHasToPay span').text(totalMoneyHasToPay.formatNumber());
-        if (isNaN($('.totalMoneyHasToPay span').text())) {
-            $('.totalMoneyHasToPay span').text("0");
-        }
-        $('.totalMoneyHasNotPaid span').text(totalMoneyHasNotPaid.formatNumber());
-        if (isNaN($('.totalMoneyHasNotPaid span').text())) {
-            $('.totalMoneyHasNotPaid span').text("0");
-        }
-    }
-
     //Check xem số ở input nhập vào có phải là dạng number hay không
     //Tạo bởi: NBDUONG(24/5/2019)
     ifIsNaN() {
@@ -1166,22 +1252,33 @@ class Fund {
     //Tạo bởi: NBDUONG(4/6/2019)
     formatCurrency() {
         $('input[data-thousands="."]').maskNumber({ integer: true });
-        //$('.')
     }
 
-    //Bấm vào 1 hàng trong dropdown menu có dữ liệu -> input ở trên hiển thị dữ liệu tương ứng với dữ liệu trong dòng đó
-    //Tạo bởi: NBDUONG (6/5/2019)
-    selectStaff() {
+    asyncDataFromChooseReceiptForm() {
         $('#recipeFormDetail .recipeFormDetail_formSupplier .table-row').mousedown(function () {
             let supplierCode = $(this).find('.detail-data-item_first-column').text().trim();
             let supplierName = $(this).find('.detail-data-item_second-column').text().trim();
             fund.asyncDataValue(supplierCode, supplierName);
             $(this).parents('.recipeFormDetail_formSupplier').hide();
             $(this).parents('.recipeFormDetail_formSupplier').prev().hide();
+            $("input[fieldName='PersonId']").val($(this).data("PersonId"));
+            $(".totalMoneyHasToPay span, .totalMoneyHasNotPaid span, div[fieldName='AmountPaid']").text("0");
+            fund.loadDocumentsByPerson();
             $(this).parents('#recipeFormDetail').find('.recipeForm_disablePayDate').hide();
             $(this).parents('#recipeFormDetail').find('.recipeForm_disableGetData').hide();
         });
+        var totalMoney = $("div[fieldName='TotalAmountPaid']").find("span").text();
+        var moneyToPay = $(".totalMoneyHasToPay").find("span").text();
+        var moneyHasNotPaid = $(".totalMoneyHasNotPaid").find("span").text();
+        $('input[fieldName="TotalMoney"]').val(totalMoney);
+        $('input[fieldName="AmountPaid"]').val(totalMoney);
+        $('input[fieldName="MoneyHasToPay"]').val(moneyToPay);
+        $('input[fieldName="MoneyHasNotPaid"]').val(moneyHasNotPaid);
+    }
 
+    //Bấm vào 1 hàng trong dropdown menu có dữ liệu -> input ở trên hiển thị dữ liệu tương ứng với dữ liệu trong dòng đó
+    //Tạo bởi: NBDUONG (6/5/2019)
+    selectStaff() {
         $('#formChooseObject .objectComboBox_dropdown-menu .option-row').mousedown(function () {
             let objectName = $(this).text().trim();
             fund.getObjectData(objectName);
@@ -1208,7 +1305,7 @@ class Fund {
 
         $('body').on('mousedown', '.document-type-dropdown .table-row', function () {
             let documentType = $(this).find('span').text().trim();
-            $('.document-type-input input[fieldName="DocumentTypeName"]').val(documentType);
+            $('.document-type-input input[fieldName="DocumentType"]').val(documentType);
             $(this).parents('.document-type-dropdown').hide();
             $('#formDetail input[fieldName="DocumentTypeId"]').val($(this).data("DocumentTypeId"));
             alert($(this).data("DocumentTypeId"));
@@ -1238,6 +1335,10 @@ class Fund {
         $('body').on('click', '#btnCloseFormDialog', function () {
             fund.closeFormDialog();
         });
+        $('body').on('click', '.view-document #btnCloseFormDialog', function () {
+            fund.check.closeDialog();
+            fund.messageDialog.closeDialog();
+        });
     }
 
     //Hàm mặc định lấy ngày hiện tại trong input
@@ -1260,6 +1361,32 @@ class Fund {
                 $(this).val($(this).attr("data-previous"));
             } else {
                 $(this).attr("data-previous", $(this).val());
+            }
+        });
+    }
+
+    //Bắt sự kiện chọn Khác hay Trả nợ trong form
+    //Tạo bởi: NBDUONG(6/5/2019)
+    setEventsRadioInput() {
+        //Bấm vào input radio để lựa chọn Khác hoặc Trả nợ trong form Thêm phiếu chi
+        //Tạo bởi: NBDUONG(6/5/2019)
+        $(".formDetail_navigation-bar #radio1").change(function () {
+            if ($(this).is(":checked")) {
+                //formContext.setDefaultClickRadio1();
+                $('.formDetail-info-other').show();
+                $('.formDetail-info-paydebt').hide();
+                $('.navigation-bar_item.choose-pay-recipt').hide();
+            }
+        });
+
+        //Bấm vào input radio để lựa chọn Khác hoặc Trả nợ trong form Thêm phiếu chi
+        //Tạo bởi: NBDUONG(6/5/2019)
+        $(".formDetail_navigation-bar #radio2").change(function () {
+            if ($(this).is(":checked")) {
+                //formContext.setDefaultClickRadio2();
+                $('.formDetail-info-paydebt').show();
+                $('.formDetail-info-other').hide();
+                $('.navigation-bar_item.choose-pay-recipt').show();
             }
         });
     }
@@ -1306,6 +1433,8 @@ class Fund {
         fund.enableInput();
     }
 
+    //Mở nút
+    //Tạo bởi: NBDUONG (11/5/2019)
     enableInput() {
         $("#formDetail input").prop('disabled', false);
         $("#formDetail input[fieldName='EmployeeName'], #formDetail .formDetail-info.formDetail-info-paydebt input[fieldName='PersonCode']").prop('disabled', true);
@@ -1324,6 +1453,33 @@ class Fund {
         $('span#ui-id-1').text("Phiếu thu");
         $(".view-document input").prop('disabled', true);
         fund.loadDataToForm();
+        fund.checkCollectOrPayForm();
+        if (fund.checkViewForm) {
+            if ($('.middle-content_table-data .table-row.choose-background').is($('.middle-content_table-data .table-row:first-child'))) {
+                $('.view-document #before-formDetail').removeClass('document-before');
+            } else {
+                $('.view-document #before-formDetail').addClass('document-before');
+            }
+        }
+    }
+
+    //Hàm check dữ liệu xem là phiếu thu hay phiếu chi
+    //Tạo bởi: NBDUONG(10/6/2019)
+    checkCollectOrPayForm() {
+        let documentCode = $('.middle-content_table-data .table-row.choose-background').data("DocumentCode");
+        let subCode = documentCode.substr(0, 2);
+        if (subCode === "PC") {
+            $('span#ui-id-1').text("Phiếu chi");
+            $('#formDetail .formDetail_navigation-bar #radio1').prop('checked', true);
+            $('.formDetail-info-other').show();
+            $('.formDetail-info-paydebt').hide();
+            $('span#ui-id-2').text("Chọn hóa đơn thu nợ");
+        } else if (subCode === "PT") {
+            $('span#ui-id-1').text("Phiếu thu");
+            $('#formDetail .formDetail_navigation-bar #radio2').prop('checked', true);
+            $('.formDetail-info-paydebt').show();
+            $('.formDetail-info-other').hide();
+        }
     }
 
     //Hàm xử lý khi chọn nút "Sửa"
@@ -1335,7 +1491,6 @@ class Fund {
         fund.allowHotKey = false;
         fund.check.openDialog();
         $('#formDetail').addClass("edit-document");
-        $('span#ui-id-1').text("Sửa phiếu thu");
         fund.loadDataToForm();
         fund.enableInput();
     }
@@ -1345,6 +1500,7 @@ class Fund {
     duplicateDocument() {
         fund.allowHotKeyInForm = true;
         fund.allowHotKey = false;
+        fund.checkViewForm = false;
         fund.check.openDialog();
         $('#formDetail').addClass("duplicate-document");
         $('span#ui-id-1').text("Nhân bản phiếu thu");
@@ -1355,6 +1511,9 @@ class Fund {
     //Hàm xử lý khi chọn nút "Chọn hóa đơn trả nợ" 
     //Tạo bởi: NBDUONG(6/5/2019)
     choosePayDebtRecipt() {
+        $('#recipeFormDetail .supplier-name-paydebt').val("");
+        $('#recipeFormDetail .input-paidMoney').val("0");
+        $('#recipeFormDetail .reciptFormDetail_tableData .detail-table-data_list-data').html("");
         fund.allowHotKeyInForm = true;
         fund.allowHotKey = false;
         fund.popup.openDialog();
@@ -1400,31 +1559,27 @@ class Fund {
     //Tạo bởi: NBDUONG(28/5/2019)
     loadDataToForm(checkDuplicate) {
         let documentId = $('.middle-content_table-data .table-row.choose-background').data("DocumentId");
-        $.ajax({
-            type: "GET",
-            url: "/fund/" + documentId,
-            contentType: "application/json;charset=utf-8",
-            dataType: "json",
-            success: function (response) {
-                if (response) {
-                    $('#formDetail input[fieldName]').each(function () {
-                        let fieldName = $(this).attr("fieldName");
-                        let dataType = $(this).attr("dataType");
-                        if (dataType === "date") {
-                            //var value = response[fieldName];
-                            var value = new Date(response[fieldName]).toLocaleDateString('en-GB');
-                            $(this).val(value);
-                        }
-                        else {
-                            $(this).val(response[fieldName]);
-                        }
-                    });
-                    if (checkDuplicate) {
-                        $('#formDetail input[fieldName="DocumentCode"]').val("PT" + Math.random().toString().substr(2, 6));
+        common.callAjaxToServer("GET", "/fund/" + documentId, null, function (response) {
+            if (response) {
+                $('#formDetail input[fieldName]').each(function () {
+                    let fieldName = $(this).attr("fieldName");
+                    let dataType = $(this).attr("dataType");
+                    if (dataType === "date") {
+                        //var value = response[fieldName];
+                        var value = new Date(response[fieldName]).toLocaleDateString('en-GB');
+                        $(this).val(value);
+                    } else if (dataType === "number") {
+                        $(this).val(response[fieldName].formatNumber());
                     }
-                } else {
-                    alert("fail");
+                    else {
+                        $(this).val(response[fieldName]);
+                    }
+                });
+                if (checkDuplicate) {
+                    $('#formDetail input[fieldName="DocumentCode"]').val("PT" + Math.random().toString().substr(2, 6));
                 }
+            } else {
+                alert("fail");
             }
         });
     }

@@ -23,6 +23,8 @@ namespace MISA.Mshopkeeper.Models.AjaxResult
         public string Reason { get; set; }
         //Địa chỉ
         public string Address { get; set; }
+        //Tên người nộp/nhận
+        public string ReceiverName { get; set; } 
         //Loại chứng từ
         public string DocumentType { get; set; }
         //Mã đối tượng
@@ -65,6 +67,7 @@ namespace MISA.Mshopkeeper.Models.AjaxResult
             TotalMoney = document.TotalMoney;
             Reason = document.Reason;
             Address = Extention.GetObjectById(document.PersonId).Address;
+            ReceiverName = document.ReceiverName;
             DocumentType = Extention.GetDocumentTypeById(document.DocumentTypeId).DocumentTypeName;
             PersonName = Extention.GetObjectById(document.PersonId).PersonName;
             PersonCode = Extention.GetObjectById(document.PersonId).PersonCode;
