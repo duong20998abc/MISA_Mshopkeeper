@@ -9,6 +9,8 @@
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css" integrity="sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay" crossorigin="anonymous">
     <link href="/Contents/plugins/jquery-ui.min.css" rel="stylesheet" />
     <link href="/Contents/css/fund/fund.css" rel="stylesheet" />
+    <link href="/Contents/css/fund/updateJqueryUI.css" rel="stylesheet" />
+    <link href="/Contents/css/fund/formfund.css" rel="stylesheet" />
     <link href="/Contents/css/common/main.css" rel="stylesheet" />
 </head>
 <body>
@@ -186,12 +188,12 @@
                         </div>
                         <span class="from-date left-float">Từ ngày</span>
                         <div class="select-date-from left-float">
-                            <input type="text" name="name" value="01/05/2019" class="select-from-date left-float" dataType="date"/>
+                            <input type="text" name="name" value="01/05/2019" class="select-from-date left-float" dataType="date" />
                             <div class="icon icon-calendar left-float"></div>
                         </div>
                         <span class="from-date left-float">Đến ngày</span>
                         <div class="select-date-to left-float">
-                            <input type="text" name="name" value="23/05/2019" class="select-to-date left-float" dataType="date"/>
+                            <input type="text" name="name" value="23/05/2019" class="select-to-date left-float" dataType="date" />
                             <div class="icon icon-calendar-to left-float"></div>
                         </div>
                         <div class="button_get-data left-float">
@@ -220,7 +222,7 @@
                                     <span><b>&ge;</b> : Lớn hơn hoặc bằng</span>
                                 </div>
                                 <div class="column-input_input-date left-float">
-                                    <input type="text" name="name" value="" class="left-float input-pickdate" dataType="date"/>
+                                    <input type="text" name="name" value="" class="left-float input-pickdate" dataType="date" />
                                     <div class="column-input_input-date-icon left-float"></div>
                                 </div>
                             </div>
@@ -309,7 +311,7 @@
                             </div>
                         </div>
                     </div>
-         
+
                     <!-- Kết thúc phần đầu bảng dữ liệu -->
                     <!-- Phần thân dữ liệu của bảng -->
                     <div class="middle-content_table-data" style="position:relative;">
@@ -326,22 +328,22 @@
                                         <div class="choose-row background-uncheck" style="line-height: 17px"><img src="" /></div>
                                     </div>
                                 </div>
-                                <div class="data-item_second-column data-item left-float data-item2" dataType="date" fieldName="DocumentDate">
+                                <div class="data-item_second-column data-item data-clickable left-float data-item2" dataType="date" fieldName="DocumentDate">
                                     <span></span>
                                 </div>
-                                <div class="data-item_third-column data-item left-float data-item3" fieldName="DocumentCode">
+                                <div class="data-item_third-column data-item data-clickable left-float data-item3" fieldName="DocumentCode">
                                     <span></span>
                                 </div>
-                                <div class="data-item_fourth-column data-item left-float data-item4" fieldName="DocumentType">
+                                <div class="data-item_fourth-column data-item data-clickable left-float data-item4" fieldName="DocumentType">
                                     <span></span>
                                 </div>
-                                <div class="data-item_fifth-column data-item left-float data-item5" dataType="number" fieldName="TotalMoney">
+                                <div class="data-item_fifth-column data-item data-clickable left-float data-item5" dataType="number" fieldName="TotalMoney">
                                     <span></span>
                                 </div>
-                                <div class="data-item_sixth-column data-item left-float data-item6" fieldName="PersonName">
+                                <div class="data-item_sixth-column data-item data-clickable left-float data-item6" fieldName="PersonName">
                                     <span></span>
                                 </div>
-                                <div class="data-item_seventh-column data-item left-float data-item7" fieldName="Reason">
+                                <div class="data-item_seventh-column data-item data-clickable left-float data-item7" fieldName="Reason">
                                     <span></span>
                                 </div>
                             </div>
@@ -503,7 +505,7 @@
                     <span class="icon icon-postpone"></span>
                     <span class="text">Hoãn</span>
                 </div>
-                <div class="list-button_item flex left-float"id="print-formDetail">
+                <div class="list-button_item flex left-float" id="print-formDetail">
                     <span class="icon icon-print"></span>
                     <span class="text">In</span>
                     <span class="icon icon-caret-down"></span>
@@ -630,7 +632,7 @@
                                         <input type="text" value="" tabindex="0" fieldName="DocumentCode" />
                                     </div>
                                     <div class="right-item-input right-item-input-with-icon flex">
-                                        <input type="text" value="" class="select-date-pay left-float" data-previous="" tabindex="0" dataType="date" fieldName="DocumentDate" style="text-align:left"/>
+                                        <input type="text" value="" class="select-date-pay left-float" data-previous="" tabindex="0" dataType="date" fieldName="DocumentDate" style="text-align:left" />
                                         <span class="icon input-calendar-icon left-float"></span>
                                     </div>
                                 </div>
@@ -674,15 +676,15 @@
                                 <div class="detail-table-data_list-data">
                                     <div class="table-row flex">
                                         <div class="detail-data-item_first-column detail-data-item left-float">
-                                            <input type="text" name="name" value="" tabindex="0" fieldName="Reason"/>
+                                            <input type="text" name="name" value="" tabindex="0" fieldName="Reason" />
                                             <div class="focusguard" id="focusguard-3" tabindex="0"></div>
                                         </div>
                                         <div class="detail-data-item_second-column detail-data-item left-float">
-                                            <input type="text" name="name" value="" style="padding-right: 10px; width: 89%;" tabindex="0" dataType="number" fieldName="TotalMoney" data-thousands="."/>
+                                            <input type="text" name="name" value="" style="padding-right: 10px; width: 89%;" tabindex="0" dataType="number" fieldName="TotalMoney" data-thousands="." />
                                         </div>
                                         <div class="detail-data-item_first-column detail-data-item left-float" style="position: relative">
                                             <div class="left-item-input-with-icon left-float flex document-type-input">
-                                                <input type="text" name="name" value="" class="left-float" tabindex="0" fieldName="DocumentType"/>
+                                                <input type="text" name="name" value="" class="left-float" tabindex="0" fieldName="DocumentType" />
                                                 <div class="icon icon-arrow-down left-float document-type-arrow"></div>
                                             </div>
                                             <div class="focusguard" id="focusguard-2" tabindex="0"></div>
@@ -737,19 +739,19 @@
                                 <div class="detail-table-data_list-data">
                                     <div class="table-row flex">
                                         <div class="document-data-item_first-column detail-data-item left-float">
-                                            <input type="text" name="name" value="" tabindex="0" fieldName="DocumentDate2" style="width: 86%; padding-right: 10px"/>
+                                            <input type="text" name="name" value="" tabindex="0" fieldName="DocumentDate2" style="width: 86%; padding-right: 10px" />
                                         </div>
                                         <div class="document-data-item_second-column detail-data-item left-float">
-                                            <input type="text" name="name" value="" tabindex="0" fieldName="DocumentCode"/>
+                                            <input type="text" name="name" value="" tabindex="0" fieldName="DocumentCode" />
                                         </div>
                                         <div class="document-data-item_first-column detail-data-item left-float">
-                                            <input type="text" name="name" value="" tabindex="0" fieldName="MoneyHasToPay" data-thousands="." dataType="number" style="width: 86%; padding-right: 10px"/>
-                                        </div>
-                                        <div class="document-data-item_first-column detail-data-item left-float" >
-                                            <input type="text" name="name" value="" tabindex="0" fieldName="MoneyHasNotPaid" data-thousands="." dataType="number" style="width: 86%; padding-right: 10px"/>
+                                            <input type="text" name="name" value="" tabindex="0" fieldName="MoneyHasToPay" data-thousands="." dataType="number" style="width: 86%; padding-right: 10px" />
                                         </div>
                                         <div class="document-data-item_first-column detail-data-item left-float">
-                                            <input type="text" name="name" value="" tabindex="0" fieldName="AmountPaid" data-thousands="." dataType="number" style="width: 86%; padding-right: 10px"/>
+                                            <input type="text" name="name" value="" tabindex="0" fieldName="MoneyHasNotPaid" data-thousands="." dataType="number" style="width: 86%; padding-right: 10px" />
+                                        </div>
+                                        <div class="document-data-item_first-column detail-data-item left-float">
+                                            <input type="text" name="name" value="" tabindex="0" fieldName="AmountPaid" data-thousands="." dataType="number" style="width: 86%; padding-right: 10px" />
                                         </div>
                                     </div>
                                 </div>
@@ -831,7 +833,7 @@
                                     <input type="text" value="" class="left-float supplier-name" tabindex="0" inputType="Name" fieldName="PersonName" />
                                 </div>
                                 <div class="left-item-input left-item-without-icon flex ">
-                                    <input type="text" value="" tabindex="0" class="receiver-name" inputType="Name" fieldName="ReceiverName"/>
+                                    <input type="text" value="" tabindex="0" class="receiver-name" inputType="Name" fieldName="ReceiverName" />
                                     <div class="exclamation left-float"></div>
                                 </div>
                                 <div class="left-item-input left-item-without-icon flex">
@@ -839,7 +841,7 @@
                                     <div class="exclamation left-float"></div>
                                 </div>
                                 <div class="left-item-input left-item-without-icon flex">
-                                    <input type="text" value="" tabindex="0" inputType="Reason" class="reason-paydebt" fieldName="Reason"/>
+                                    <input type="text" value="" tabindex="0" inputType="Reason" class="reason-paydebt" fieldName="Reason" />
                                     <div class="exclamation left-float"></div>
                                 </div>
                                 <div class="left-item-input flex" style="margin-top: 3px;">
@@ -885,7 +887,7 @@
                                         <input type="text" value="" tabindex="0" fieldName="DocumentCode" />
                                     </div>
                                     <div class="right-item-input right-item-input-with-icon flex" style="margin-top:12px;">
-                                        <input type="text" value="" class="select-date-pay left-float" data-previous="" dataType="date" tabindex="0" fieldName="DocumentDate" style="text-align:left"/>
+                                        <input type="text" value="" class="select-date-pay left-float" data-previous="" dataType="date" tabindex="0" fieldName="DocumentDate" style="text-align:left" />
                                         <span class="icon input-calendar-icon left-float"></span>
                                     </div>
                                     <div class="right-item-input right-item-input-with-icon flex choosePaidType">
@@ -929,14 +931,14 @@
                                 <div class="detail-table-data_list-data">
                                     <div class="table-row flex">
                                         <div class="detail-data-item_first-column detail-data-item left-float">
-                                            <input type="text" name="name" value="" tabindex="0" id="focusguard-1" fieldName="Reason"/>
+                                            <input type="text" name="name" value="" tabindex="0" id="focusguard-1" fieldName="Reason" />
                                         </div>
                                         <div class="detail-data-item_second-column detail-data-item left-float">
-                                            <input type="text" name="name" value="" style="padding-right: 10px; width: 89%;" tabindex="0" dataType="number" fieldName="TotalMoney" data-thousands="."/>
+                                            <input type="text" name="name" value="" style="padding-right: 10px; width: 89%;" tabindex="0" dataType="number" fieldName="TotalMoney" data-thousands="." />
                                         </div>
                                         <div class="detail-data-item_first-column detail-data-item left-float" style="position: relative">
                                             <div class="left-item-input-with-icon left-float flex document-type-input">
-                                                <input type="text" name="name" value="" class="left-float" tabindex="0" fieldName="DocumentType"/>
+                                                <input type="text" name="name" value="" class="left-float" tabindex="0" fieldName="DocumentType" />
                                                 <div class="icon icon-arrow-down left-float document-type-arrow"></div>
                                             </div>
                                             <div class="focusguard" id="focusguard-2" tabindex="0"></div>
@@ -1032,7 +1034,7 @@
                     </div>
                     <div class="formDetail_general-info_right-item_list-input left-float" style="position:relative;">
                         <div class="right-item-input right-item-input-with-icon flex">
-                            <input type="text" value="" class="select-date-pay left-float" data-previous="" tabindex="2"/>
+                            <input type="text" value="" class="select-date-pay left-float" data-previous="" tabindex="2" />
                             <span class="icon input-calendar-icon left-float"></span>
                         </div>
                         <div class="left-item-input-with-icon-disabled recipeForm_disablePayDate"></div>
@@ -1071,7 +1073,7 @@
             <!-- Tạo bởi: NBDUONG (6/4/2019) -->
             <div class="reciptFormDetail_tableData">
                 <div class="detail-table-data_list-data">
-                    
+
                 </div>
                 <div class="document-by-person-row-clone" style="display: none;">
                     <div class="table-row flex">
@@ -1087,10 +1089,10 @@
                         <div class="detail-data-item_second-column detail-data-item left-float hasToPay" dataType="number" fieldName="MoneyHasToPay">
                             <span></span>
                         </div>
-                        <div class="detail-data-item_second-column detail-data-item left-float hasNotPaid" dataType="number" >
+                        <div class="detail-data-item_second-column detail-data-item left-float hasNotPaid" dataType="number">
                             <span fieldName="MoneyHasNotPaid"></span>
                         </div>
-                        <div class="detail-data-item_second-column detail-data-item left-float amountPaid" style="border-right: none" dataType="number" >
+                        <div class="detail-data-item_second-column detail-data-item left-float amountPaid" style="border-right: none" dataType="number">
                             <span fieldName="AmountPaid"></span>
                         </div>
                     </div>
@@ -1101,7 +1103,7 @@
                     <div class="detail-total-money-row_second-column total-money-column left-float"></div>
                     <div class="detail-total-money-row_second-column total-money-column left-float totalMoneyHasToPay" dataType="number"><span></span></div>
                     <div class="detail-total-money-row_second-column total-money-column left-float totalMoneyHasNotPaid" dataType="number"><span></span></div>
-                    <div class="detail-total-money-row_second-column total-money-column left-float totalAmountPaid" dataType="number" fieldName ="TotalAmountPaid"><span></span></div>
+                    <div class="detail-total-money-row_second-column total-money-column left-float totalAmountPaid" dataType="number" fieldName="TotalAmountPaid"><span></span></div>
                 </div>
             </div>
         </div>
@@ -1159,18 +1161,18 @@
                 <div class="formChooseObject_table-row-clone" style="display:none">
                     <div class="table-row flex">
                         <div class="detail-data-item_first-column detail-data-item left-float" style="border-left:none">
-                            <input type="radio" name="customer" value="" fieldName ="PersonRadio"/>
+                            <input type="radio" name="customer" value="" fieldName="PersonRadio" />
                         </div>
-                        <div class="detail-data-item_second-column detail-data-item left-float" fieldName ="PersonCode">
+                        <div class="detail-data-item_second-column detail-data-item left-float" fieldName="PersonCode">
                             <span></span>
                         </div>
-                        <div class="detail-data-item_third-column detail-data-item left-float" fieldName ="PersonName"> 
+                        <div class="detail-data-item_third-column detail-data-item left-float" fieldName="PersonName">
                             <span></span>
                         </div>
-                        <div class="detail-data-item_second-column detail-data-item left-float" fieldName ="PersonType"> 
+                        <div class="detail-data-item_second-column detail-data-item left-float" fieldName="PersonType">
                             <span></span>
                         </div>
-                        <div class="detail-data-item_fourth-column detail-data-item left-float" style="border-right:none" fieldName ="Address">
+                        <div class="detail-data-item_fourth-column detail-data-item left-float" style="border-right:none" fieldName="Address">
                             <span></span>
                         </div>
                     </div>
@@ -1210,7 +1212,7 @@
                 <div class="icon icon-arrow-down left-float"></div>
             </div>
             <div class="nav_objectComboBox_disable"></div>
-            <input type="text" name="name" value="" placeholder="Nhập mã đối tượng, tên đối tượng" class="left-float formChooseObject_navigation-input" autofocus/>
+            <input type="text" name="name" value="" placeholder="Nhập mã đối tượng, tên đối tượng" class="left-float formChooseObject_navigation-input" autofocus />
             <div class="nav_searchBtn left-float">
                 <div class="searchBtn_icon-search icon left-float"></div>
                 <span class="searchBtn_text left-float">Tìm kiếm</span>
@@ -1240,18 +1242,18 @@
                 <div class="formChooseStaff_table-row-clone" style="display:none;">
                     <div class="table-row flex">
                         <div class="detail-data-item_first-column detail-data-item left-float" style="border-left:none; width:3.46%">
-                            <input type="radio" name="customer" value="" fieldName ="EmployeeRadio"/>
+                            <input type="radio" name="customer" value="" fieldName="EmployeeRadio" />
                         </div>
-                        <div class="detail-data-item_second-column detail-data-item left-float" fieldName ="EmployeeCode">
+                        <div class="detail-data-item_second-column detail-data-item left-float" fieldName="EmployeeCode">
                             <span></span>
                         </div>
-                        <div class="detail-data-item_third-column detail-data-item left-float"  fieldName ="EmployeeName">
+                        <div class="detail-data-item_third-column detail-data-item left-float" fieldName="EmployeeName">
                             <span></span>
                         </div>
                         <div class="detail-data-item_second-column detail-data-item left-float">
                             <span>Nhân viên</span>
                         </div>
-                        <div class="detail-data-item_fourth-column detail-data-item left-float" style="border-right:none" fieldName ="Address">
+                        <div class="detail-data-item_fourth-column detail-data-item left-float" style="border-right:none" fieldName="Address">
                             <span></span>
                         </div>
                     </div>
@@ -1295,7 +1297,7 @@
     <script src="/Contents/plugins/jquery.masknumber.min.js"></script>
     <script src="/Contents/js/Common/Common.js"></script>
     <script src="/Contents/js/fund/dialogFund.js"></script>
-    <script src="/Contents/js/fund/formfund.js"></script>
     <script src="/Contents/js/fund/fund.js"></script>
+    <script src="/Contents/js/fund/formfund.js"></script>
 </body>
 </html>

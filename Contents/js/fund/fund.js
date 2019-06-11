@@ -190,6 +190,7 @@ $(document).ready(function () {
             $('.choose-row').removeClass('non-background');
             $('.table-data_list-data .table-row.flex').removeClass('choose-background');
         }
+        fund.disableButton();
     });
 
     //Bấm vào checkbox
@@ -204,6 +205,8 @@ $(document).ready(function () {
             $(this).removeClass('non-background');
             $(this).parents('.table-row.flex').removeClass('choose-background');
         }
+        fund.setCheckedRow();
+        fund.disableButton();
     });
 
     //Bấm vào checkbox
