@@ -1,5 +1,6 @@
 ﻿using MISA.Mshopkeeper.Models;
 using MISA.Mshopkeeper.Models.AjaxResult;
+using MISA.Mshopkeeper.Models.Dto;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -33,7 +34,7 @@ namespace MISA.Mshopkeeper.Controllers
                     documents.Add(document);
                }
                 await Task.Delay(1000);
-                return documents;
+                return documents.Where(x => x.IsPaid == true).OrderByDescending(x => x.DocumentDate);
             }
             catch (Exception)
             {
@@ -84,7 +85,7 @@ namespace MISA.Mshopkeeper.Controllers
                     }
                 }
                 await Task.Delay(100);
-                return listDocuments;
+                return listDocuments.Where(x => x.IsPaid == false);
             }
             catch (Exception)
             {
@@ -269,6 +270,59 @@ namespace MISA.Mshopkeeper.Controllers
             catch (Exception)
             {
                 return false;
+            }
+        }
+
+        /// <summary>
+        /// Hàm xử lý lọc dữ liệu chứng từ theo điều kiện lọc
+        /// </summary>
+        /// <param name="documentDto"></param>
+        /// <returns></returns>
+        /// Tạo bởi: NBDUONG(12/6/2019)
+        [HttpPost]
+        [Route("documents/filterData")]
+        public IEnumerable<DocumentAjaxResult> FilterDocument(DocumentDto documentDto)
+        {
+            try
+            {
+                List<DocumentAjaxResult> documents = new List<DocumentAjaxResult>();
+                foreach(var item in Extention.GetListDocumentsByFilter(documentDto))
+                {
+                    var documentAjaxResult = new DocumentAjaxResult(item);
+                    documents.Add(documentAjaxResult);
+                }
+                return documents;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// Hàm xử lý lọc dữ liệu chứng từ theo ngày tháng
+        /// </summary>
+        /// <param name="documentDto"></param>
+        /// <returns></returns>
+        /// Tạo bởi: NBDUONG(13/6/2019)
+        [HttpPost]
+        [Route("documents/getByDate")]
+        public IEnumerable<DocumentAjaxResult> GetDocumentsByDate(DocumentDto documentDto)
+        {
+            try
+            {
+                List<DocumentAjaxResult> documentAjaxResults = new List<DocumentAjaxResult>();
+                var listDocuments = Extention.GetListDocumentsByDate(documentDto.FromDate, documentDto.ToDate);
+                foreach(var item in listDocuments)
+                {
+                    var document = new DocumentAjaxResult(item);
+                    documentAjaxResults.Add(document);
+                }
+                return documentAjaxResults.Where(x => x.IsPaid == true).OrderByDescending(x => x.DocumentDate);
+            }
+            catch (Exception)
+            {
+                return null;
             }
         }
     } 

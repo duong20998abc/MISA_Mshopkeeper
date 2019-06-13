@@ -58,7 +58,7 @@ class Purchase  {
             TypeFilter: TypeFilter
         };
         // Gọi ajax post dữ liệu lên server
-        common.callAjaxToServer("Post", "/purchase/getDataFilter", IvoiceDto, function (result) {
+        common.callAjaxToServer("POST", "/purchase/getDataFilter", IvoiceDto, function (result) {
             if (result) {
                 purchase.renderListInvoice(true, result);
             } else {
@@ -104,17 +104,13 @@ class Purchase  {
         });
     }
     
-    
     // Hủy các sự kiện click khi không có dữ liệu hóa đơn
     // Người tạo: ntxuan (20/5/2019)
     setDisableEventButtonMenubar() {
         if ($(".content-right .list-content-invoice .row-clicked").length > 0) {
             $(".content-right .disable-button").removeClass("disable-button");
         } else {
-            $(".content-right .btn-Delete").addClass("disable-button");
-            $(".content-right .btnDuplicate").addClass("disable-button");
-            $(".content-right .btnView").addClass("disable-button");
-            $(".content-right .btnEdit").addClass("disable-button");
+            $(".content-right .btn-toggle-show").addClass("disable-button");
         }
     }
     
@@ -520,13 +516,14 @@ class Purchase  {
                     if (!prevent) {
                         if (event.ctrlKey) {
                             $(focus).parent().addClass("row-clicked");
-                            purchase.checkStatusAllRowSelected();
                         } else {
                             $(".content-right .wrapp-dataTable .row-data img").attr("src", "");
                             $(".content-right .wrapp-dataTable .row-clicked").removeClass("row-clicked");
                             $(focus).parent().addClass("row-clicked");
                         }
                         purchase.loadProductsForInvoice($(focus).parent().data("InvoiceId"));
+                        purchase.checkStatusAllRowSelected();
+                        purchase.setDisableEventButtonMenubar();
                     }
                     prevent = false;
                 }, delay);

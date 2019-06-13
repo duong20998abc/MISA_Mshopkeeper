@@ -56,6 +56,7 @@ class PurchaseFormDialog {
     validateFormatCurrency() {
         $('[data-thousands="."]').maskNumber({ integer: true });
         $(".row-empty [fieldName]").data("value", 0);
+        $(".row-empty [fieldName='Quantity']").data("value", 1);
     }
 
     // Load các hàng hóa vào bảng
@@ -88,6 +89,7 @@ class PurchaseFormDialog {
                 $(".form-addNew .list-data-bottom").append(rowCurrent.clone(true));
                 rowCurrent.removeClass("row-empty").addClass("other-row");
             }
+            rowCurrent.find('[fieldname="Quantity"]').val(1);
             rowCurrent.find('[fieldname="ProductName"]').text(product.ProductName).data("value", product.ProductName);
             rowCurrent.find('[fieldname="SKU"]').val(product.SKU).data("value", product.SKU);
             rowCurrent.find('[fieldname="Storage"]').text(product.Storage).data("value", product.Storage);

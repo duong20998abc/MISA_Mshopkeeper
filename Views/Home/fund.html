@@ -239,7 +239,7 @@
                                     <span><b>!</b> : Không chứa</span>
                                 </div>
                                 <div class="column-input_input-date left-float">
-                                    <input type="text" name="name" value="" class="left-float" />
+                                    <input type="text" name="name" value="" class="left-float" fieldName="search-documentCode"/>
                                 </div>
                             </div>
                         </div>
@@ -290,7 +290,7 @@
                                     <span><b>!</b> : Không chứa</span>
                                 </div>
                                 <div class="column-input_input-date left-float">
-                                    <input type="text" name="name" value="" class="left-float" />
+                                    <input type="text" name="name" value="" class="left-float" fieldName="search-personName" />
                                 </div>
                             </div>
                         </div>
@@ -306,7 +306,7 @@
                                     <span><b>!</b> : Không chứa</span>
                                 </div>
                                 <div class="column-input_input-date column-input_input-date-seventh left-float">
-                                    <input type="text" name="name" value="" class="left-float" />
+                                    <input type="text" name="name" value="" class="left-float" fieldName="search-reason"/>
                                 </div>
                             </div>
                         </div>
@@ -545,6 +545,7 @@
                             <input type="text" name="name" fieldName="PersonId" value="" hidden />
                             <input type="text" name="name" fieldName="EmployeeId" value="" hidden />
                             <input type="text" name="name" fieldName="DocumentTypeId" value="" hidden />
+                            <input type="number" name="name" fieldName="CheckType" value="" hidden />
                         </div>
                         <div class="formDetail_general-info_left-item left-float">
                             <div class="formDetail_general-info_left-item_intro">Thông tin chung</div>
@@ -687,7 +688,6 @@
                                                 <input type="text" name="name" value="" class="left-float" tabindex="0" fieldName="DocumentType" />
                                                 <div class="icon icon-arrow-down left-float document-type-arrow"></div>
                                             </div>
-                                            <div class="focusguard" id="focusguard-2" tabindex="0"></div>
                                             <div class="document-type-dropdown">
                                                 <div class="detail-table-data_list-data">
 
@@ -775,11 +775,12 @@
                         <div class="field-data-hidden" style="display:none">
                             <input type="text" name="name" fieldName="PersonId" value="" hidden />
                             <input type="text" name="name" fieldName="EmployeeId" value="" hidden />
+                            <input type="number" name="name" fieldName="CheckType" value="" hidden />
                             <input type="text" name="name" fieldName="DocumentTypeId" value="" hidden />
                         </div>
                         <div class="formDetail_general-info_left-item left-float">
                             <div class="formDetail_general-info_left-item_intro">Thông tin chung</div>
-                            <!--List Label-->
+                            <!--Danh sách nhãn-->
                             <div class="formDetail_general-info_left-item_list-info left-float" style="width: 115px;">
                                 <div class="left-item-info">Đối tượng</div>
                                 <div class="left-item-info">Người nhận</div>
@@ -939,9 +940,9 @@
                                         <div class="detail-data-item_first-column detail-data-item left-float" style="position: relative">
                                             <div class="left-item-input-with-icon left-float flex document-type-input">
                                                 <input type="text" name="name" value="" class="left-float" tabindex="0" fieldName="DocumentType" />
+                                                <div class="focusguard" id="focusguard-2" tabindex="0"></div>
                                                 <div class="icon icon-arrow-down left-float document-type-arrow"></div>
                                             </div>
-                                            <div class="focusguard" id="focusguard-2" tabindex="0"></div>
                                             <div class="document-type-dropdown">
                                                 <div class="detail-table-data_list-data">
 

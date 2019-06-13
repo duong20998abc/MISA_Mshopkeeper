@@ -624,7 +624,7 @@ input[dataType="date"] {
 }
 
 .choose-all,
-.choose-row {
+.choose-row, .choose-row-receiptForm {
     width: 20px;
     height: 20px;
     margin: auto;
@@ -634,7 +634,7 @@ input[dataType="date"] {
     margin-top: 22px;
 }
 
-.choose-row {
+.choose-row, .choose-row-receiptForm {
     margin-top: 7px;
 }
 

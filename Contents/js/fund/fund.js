@@ -1,7 +1,4 @@
-﻿//File js với các hàm được sử dụng trong file fund.html
-//Tạo bởi: NBDUONG (30/4/2019)
-
-//Hàm chạy khi mọi dữ liệu trong cây DOM đã được load hết
+﻿//Hàm chạy khi mọi dữ liệu trong cây DOM đã được load hết
 //Tạo bởi: NBDUONG (30/4/2019)
 $(document).ready(function () {
     //Menu sổ xuống khi click nút
@@ -289,6 +286,8 @@ $(document).ready(function () {
         if ($(this).closest('.ui-dialog-titlebar').next().hasClass('view-document')) {
             fund.check.closeDialog();
             fund.messageDialog.closeDialog();
+            fund.allowHotKey = true;
+            fund.allowHotKeyInForm = false;
         }
     });
 });
@@ -296,7 +295,7 @@ $(document).ready(function () {
 //Hàm xử lý khi bấm ra ngoài dropdown menu sẽ tự động ẩn các dropdown menu đó 
 //Tạo bởi: NBDUONG (3/5/2019)
 $(document).mouseup(function (e) {
-    var container = $('.user-name_dropdown-menu, .comboBox_dropdown-menu, .fund-menu, .recipeFormDetail_formSupplier, #formChooseObject .objectComboBox_dropdown-menu, .recipeFormDetail_formStaff, .select-option-menu.left-float, .choose-option-add, .document-type-dropdown');
+    var container = $('.user-name_dropdown-menu, .comboBox_dropdown-menu, .fund-menu, .recipeFormDetail_formSupplier, #formChooseObject .objectComboBox_dropdown-menu, .recipeFormDetail_formStaff, .select-option-menu.left-float, .choose-option-add, .document-type-dropdown, .recipeFormDetail_formStaff, .recipeFormDetail_formSupplier');
     if (!container.is(e.target) && container.has(e.target).length === 0) {
         container.hide();
     }

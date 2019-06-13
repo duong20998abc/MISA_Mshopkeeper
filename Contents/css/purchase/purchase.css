@@ -992,6 +992,7 @@ span.text9 {
     width: 165px;
     box-shadow: 0px 1px 13px 2px #615a5a;
     display: none;
+    text-align: left;
 }
 
     .operator span {

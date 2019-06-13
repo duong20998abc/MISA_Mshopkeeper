@@ -42,6 +42,12 @@ namespace MISA.Mshopkeeper.Models.AjaxResult
         //Số tiền đã trả
         public double AmountPaid { get; set; }
 
+        //Check chứng từ được trả chưa
+        public bool IsPaid { get; set; }
+
+        //Check loại chứng từ là Khác hay trả nợ
+        public int CheckType { get; set; }
+
         ////Khóa ngoại tới bảng loại chứng từ
         public Guid DocumentTypeId { get; set; }
         //Khóa ngoại tới bảng đối tượng
@@ -52,6 +58,7 @@ namespace MISA.Mshopkeeper.Models.AjaxResult
         public DocumentAjaxResult()
         {
             DocumentId = Guid.NewGuid();
+            IsPaid = true;
         }
 
         /// <summary>
@@ -76,6 +83,8 @@ namespace MISA.Mshopkeeper.Models.AjaxResult
             MoneyHasToPay = document.MoneyHasToPay;
             MoneyHasNotPaid = document.MoneyHasNotPaid;
             AmountPaid = document.AmountPaid;
+            IsPaid = document.IsPaid;
+            CheckType = document.CheckType;
             DocumentTypeId = document.DocumentTypeId;
             PersonId = document.PersonId;
             EmployeeId = document.EmployeeId;

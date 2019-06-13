@@ -279,7 +279,9 @@ namespace MISA.Mshopkeeper.Models
             document.MoneyHasNotPaid = documentAjaxResult.MoneyHasNotPaid;
             document.MoneyHasToPay = documentAjaxResult.MoneyHasToPay;
             document.EmployeeId = documentAjaxResult.EmployeeId;
-        
+            document.IsPaid = documentAjaxResult.IsPaid;
+            document.CheckType = documentAjaxResult.CheckType;
+
             return document;
         }
 
@@ -390,6 +392,51 @@ namespace MISA.Mshopkeeper.Models
             }
            
             return invoices;
+        }
+
+        /// <summary>
+        /// Hàm lấy dữ liệu chứng từ theo điều kiện lọc
+        /// </summary>
+        /// <param name="documentDto"></param>
+        /// <returns></returns>
+        /// Tạo bởi: NBDUONG(12/6/2019)
+        public static List<Document> GetListDocumentsByFilter (DocumentDto documentDto)
+        {
+            var documents = new List<Document>();
+            if(documentDto.TypeFilter == "search-documentCode")
+            {
+                documents = MshopkeeperDB.Documents.Where(s => s.DocumentCode.ToLower().Contains(documentDto.TextFilter.ToLower())).ToList();
+            }
+            else if (documentDto.TypeFilter == "search-reason")
+            {
+                documents = MshopkeeperDB.Documents.Where(s => s.Reason.ToLower().Contains(documentDto.TextFilter.ToLower())).ToList();
+            }
+            else if (documentDto.TypeFilter == "search-personName")
+            {
+                documents = MshopkeeperDB.Documents.Where(s => Extention.GetObjectById(s.PersonId).PersonName.ToLower().Contains(documentDto.TextFilter.ToLower())).ToList();
+            }
+
+            return documents;
+        }
+
+        /// <summary>
+        /// Hàm lấy dữ liệu chứng từ theo ngày tháng
+        /// </summary>
+        /// <param name="fromDate"></param>
+        /// <param name="toDate"></param>
+        /// <returns></returns>
+        /// Tạo bởi: NBDUONG(13/6/2019)
+        public static List<Document> GetListDocumentsByDate(DateTime fromDate, DateTime toDate)
+        {
+            var documents = new List<Document>();
+            foreach(var item in MshopkeeperDB.Documents)
+            {
+                if(CompareDate(fromDate, item.DocumentDate) <= 0 && CompareDate(toDate, item.DocumentDate) >= 0)
+                {
+                    documents.Add(item);
+                }
+            }
+            return documents;
         }
     }
 }

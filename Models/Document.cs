@@ -32,6 +32,13 @@ namespace MISA.Mshopkeeper.Models
         public string ReceiverName { get; set; }
         //Lý do
         public string Reason { get; set; }
+
+        //Check được trả chưa
+        public bool IsPaid { get; set; }
+
+        //Check loại chứng từ là Khác hay trả nợ
+        public int CheckType { get; set; }
+
         //Khóa ngoại đến bảng Person
         public Guid PersonId { get; set; }
 
@@ -43,6 +50,7 @@ namespace MISA.Mshopkeeper.Models
         {
             DocumentId = Guid.NewGuid();
             DocumentDate = DateTime.Now;
+            IsPaid = true;
         }
     }
 }

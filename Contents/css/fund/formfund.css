@@ -918,7 +918,8 @@ button.alertDialog_btnCancel, .delete-form-message {
 }
 
 .view-document span.input-dropdown-icon, .view-document span.input-search-icon, .view-document span.input-calendar-icon, .view-document .left-item-input-with-icon-disabled, .view-document .icon-arrow-down,
-.edit-document span.input-dropdown-icon.dropdown-supplier, .edit-document span.input-search-icon.search-icon-supplier, .edit-document .left-item-input-with-icon-disabled {
+.edit-document span.input-dropdown-icon.dropdown-supplier, .edit-document span.input-search-icon.search-icon-supplier, .edit-document .left-item-input-with-icon-disabled,
+.duplicate-document .choose-pay-recipt, .duplicate-document .formDetail-info-paydebt {
     display: none;
 }
 
